@@ -8,6 +8,7 @@ export default function App() {
       <Text>Jo Was Here</Text>
       <Text>New Branch</Text>
       <Text>Hi Jo</Text>
+      <Text>kj second branch test</Text>
       <StatusBar style="auto" />
     </View>
   );
