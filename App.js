@@ -7,6 +7,7 @@ export default function App() {
       <Text>Test</Text>
       <Text>Jo Was Here</Text>
       <Text>New Branch</Text>
+      <Text>Hi Jo</Text>
       <StatusBar style="auto" />
     </View>
   );
