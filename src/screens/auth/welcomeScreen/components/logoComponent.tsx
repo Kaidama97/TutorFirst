@@ -9,7 +9,7 @@ const LogoComponent: React.FC = () => {
   return (
     <StyledView className="flex-2 flex-row justify-center">
       <StyledImage
-        source={require('../../../assets/icons/logo.png')}
+        source={require('../../../../assets/icons/logo.png')}
         style={{ width: 350, height: 350 }}
         tintColor="#FFFFFF"
         resizeMode="contain"

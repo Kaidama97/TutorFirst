@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { styled } from 'nativewind';
-import { theme } from '../../assets/theme/theme';
+import { theme } from '../../../assets/theme/theme';
 import LogoComponent from './components/logoComponent';
 import Form from './components/form';
 

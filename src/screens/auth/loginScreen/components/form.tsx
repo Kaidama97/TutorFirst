@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { styled } from 'nativewind';
-import Button from '../../../components/button';
+import Button from '../../../../components/button';
 
 const StyledView = styled(View);
 const StyledTextInput = styled(TextInput);

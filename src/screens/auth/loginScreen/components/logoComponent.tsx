@@ -11,7 +11,7 @@ const LogoComponent: React.FC = () => {
     <StyledSafeAreaView className="flex">
       <StyledView className="flex-row justify-center">
         <StyledImage
-          source={require('../../../assets/icons/logo.png')}
+          source={require('../../../../assets/icons/logo.png')}
           style={{ width: 250, height: 250 }}
           tintColor="#FFFFFF"
         />

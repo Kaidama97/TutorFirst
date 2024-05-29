@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, SafeAreaView } from 'react-native';
 import { styled } from 'nativewind';
-import { theme } from '../../assets/theme/theme';
+import { theme } from '../../../assets/theme/theme';
 import ButtonComponent from './components/buttonComponent';
 import Header from './components/header';
 import LogoComponent from './components/logoComponent';
