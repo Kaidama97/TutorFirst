@@ -20,7 +20,6 @@ const AuthNavigation: React.FC = () => {
         <AuthStack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
         <AuthStack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <AuthStack.Screen name="Register" component={Register} options={{ headerShown: false }} />
-        {/* <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} /> */}
       </AuthStack.Navigator>
   );
 };
