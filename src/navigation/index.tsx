@@ -4,6 +4,7 @@ import { AuthContext, AuthProvider } from '../provider/authProvider';
 
 import AuthNavigation from './AuthNavigation';
 import MainNavigation from './MainNavigation';
+import BottomNavigation from './bottomNavigation';
 
 const AppNavigation = () => {
 
@@ -13,7 +14,7 @@ const AppNavigation = () => {
 
     return (
         <NavigationContainer>
-          {auth.session && auth.user ? <MainNavigation/> : <AuthNavigation/>}
+          {auth.session && auth.user ? <BottomNavigation/> : <AuthNavigation/>}
         </NavigationContainer>
     );
 }
