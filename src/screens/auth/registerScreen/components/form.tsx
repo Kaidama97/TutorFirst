@@ -1,10 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { styled } from 'nativewind';
 import Button from '../../../../components/button';
 
 import { supabase } from '../../../../initSupabase';
-import { AuthContext } from "@/src/provider/authProvider";
 
 const StyledView = styled(View);
 const StyledTextInput = styled(TextInput);
@@ -18,7 +17,6 @@ interface FormProps {
 
 const Form: React.FC<FormProps> = ({ navigation }) => {
 
-
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -29,25 +27,34 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
     return emailRegex.test(email);
   };
 
-  async function login() {
-    if(validateEmail(email)) {
+  const handleEmailChange = (email: string): void => {
+    setIsValidEmail(validateEmail(email));
+  };
+
+  async function signUp() {
+
+    if (validateEmail(email)) {
       setIsValidEmail(true);
       setLoading(true);
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
+        options: {
+          emailRedirectTo: 'https://example.com/welcome',
+        },
       });
       if (!error && !data) {
         setLoading(false);
-        
+        console.log(data);
       }
       if (error) {
         setLoading(false);
         alert(error.message);
-      } 
-
+      }
     } else {
       setIsValidEmail(false);
+      console.log(isValidEmail);
+
     }
   }
 
@@ -55,10 +62,11 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
   return (
     <StyledView className="form space-y-2">
       <StyledTextInput
-        placeholder="Enter your email"
+        placeholder="Email"
         keyboardType="email-address"
         autoCapitalize="none"
-        className={`p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3 ${!isValidEmail ? 'border-red-500' : 'border-gray-300'}`}
+        value={email}
+        className= {`p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3 ${!isValidEmail ? 'border-red-500' : 'border-gray-300'}`}
         onChangeText={(text) => setEmail(text)}
       />
       {!isValidEmail && <Text className="text-red-500 mt-1">Please enter a valid email address</Text>}
@@ -68,23 +76,19 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
         className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
         onChangeText={(text) => setPassword(text)}
       />
-      
-      <StyledTouchableOpacity className="flex items-end mb-5">
-        <StyledText>Forgot Password?</StyledText>
-      </StyledTouchableOpacity>
+
       <Button
         type="primary"
-        text="Log In"
-        onPress={() => login()}
+        text="Sign Up"
+        onPress={() => signUp()}
       />
-
 
       <StyledView className="flex-row justify-center">
         <StyledText className="text-gray-500 font-semibold">
-          Don't have an account?
+         Already have an account?
         </StyledText>
-        <StyledTouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <StyledText className="font-semibold text-yellow-500"> Click Here</StyledText>
+        <StyledTouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <StyledText className="font-semibold text-yellow-500"> Log In</StyledText>
         </StyledTouchableOpacity>
       </StyledView>
     </StyledView>

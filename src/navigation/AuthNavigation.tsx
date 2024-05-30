@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navigation/native-stack';
 import Login from '../screens/auth/loginScreen/index';
 import Welcome from '../screens/auth/welcomeScreen/index';
-import Register from '../screens/auth/loginScreen/registerScreen/index';
+import Register from '../screens/auth/registerScreen/index';
 
 // Define the type for the navigation stack
 type AuthStackParamList = {
