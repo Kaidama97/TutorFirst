@@ -4,12 +4,14 @@ import { createNativeStackNavigator, NativeStackScreenProps } from '@react-navig
 import Login from '../screens/auth/loginScreen/index';
 import Welcome from '../screens/auth/welcomeScreen/index';
 import Register from '../screens/auth/registerScreen/index';
+import Profile from '../screens/register/profileScreen/index';
 
 // Define the type for the navigation stack
 type AuthStackParamList = {
   Welcome: undefined;
   Login: undefined;
   Register: undefined;
+  Profile: undefined;
 };
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
@@ -20,6 +22,7 @@ const AuthNavigation: React.FC = () => {
         <AuthStack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
         <AuthStack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <AuthStack.Screen name="Register" component={Register} options={{ headerShown: false }} />
+        <AuthStack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
       </AuthStack.Navigator>
   );
 };

@@ -14,6 +14,7 @@ const LogInScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       <StyledView className="flex-1 bg-white px-8 pt-8" style={{ borderTopLeftRadius: 65, borderTopRightRadius: 65 }}>
         <Text className="text-2xl font-bold mb-8">Sign Up</Text>
         <Form navigation={navigation} />
+        
       </StyledView>
     </StyledView>
   );

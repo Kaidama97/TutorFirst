@@ -19,6 +19,8 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [isSamePassword, setIsSamePassword] =  useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [isValidEmail, setIsValidEmail] = useState<boolean>(true);
 
@@ -35,25 +37,29 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
 
     if (validateEmail(email)) {
       setIsValidEmail(true);
-      setLoading(true);
-      const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-          emailRedirectTo: 'https://example.com/welcome',
-        },
-      });
+
+      if (password === confirmPassword) { 
+        setLoading(true);
+        const { data, error } = await supabase.auth.signUp({
+          email: email,
+          password: password,
+          options: {
+            emailRedirectTo: 'https://example.com/welcome',
+          },
+        });
+      
       if (!error && !data) {
         setLoading(false);
-        console.log(data);
       }
       if (error) {
         setLoading(false);
         alert(error.message);
       }
     } else {
+      setIsSamePassword(false);
+    }
+    } else {
       setIsValidEmail(false);
-      console.log(isValidEmail);
 
     }
   }
@@ -66,16 +72,25 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
         keyboardType="email-address"
         autoCapitalize="none"
         value={email}
-        className= {`p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3 ${!isValidEmail ? 'border-red-500' : 'border-gray-300'}`}
+        className= {`p-4 bg-gray-100 text-gray-700 rounded-2xl mb-0 ${!isValidEmail ? 'border-red-500' : 'border-gray-300'}`}
         onChangeText={(text) => setEmail(text)}
       />
-      {!isValidEmail && <Text className="text-red-500 mt-1">Please enter a valid email address</Text>}
+      {!isValidEmail && <Text className="text-red-500 mt-0 ml-1">Please enter a valid email address</Text>}
       <StyledTextInput
         placeholder="Password"
         secureTextEntry
         className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
         onChangeText={(text) => setPassword(text)}
       />
+
+      <StyledTextInput
+        placeholder="Re-type Password"
+        secureTextEntry
+        className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-0"
+        onChangeText={(text) => setConfirmPassword(text)}
+      />
+
+      {!isSamePassword && <Text className="text-red-500 mt-0 ml-1 mb-3">Password did not match!</Text>}
 
       <Button
         type="primary"

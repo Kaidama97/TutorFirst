@@ -4,19 +4,21 @@ import { AuthContext, AuthProvider } from '../provider/authProvider';
 
 import AuthNavigation from './AuthNavigation';
 import MainNavigation from './MainNavigation';
+import RegisterNavigation from './registerNavigation';
 import BottomNavigation from './bottomNavigation';
 
 const AppNavigation = () => {
 
     const auth = useContext(AuthContext);
     const user = auth.user;
-    console.log("Auth: " + auth.session + " User " + user);
+    console.log("Auth: " + auth.session + " User " + user + " username:" + auth.username);
 
     return (
         <NavigationContainer>
-          {auth.session && auth.user ? <BottomNavigation/> : <AuthNavigation/>}
+          {auth.session && auth.username ? <BottomNavigation/> : auth.session && !auth.username ? <RegisterNavigation/> : <AuthNavigation/>}
         </NavigationContainer>
     );
 }
+
 
 export default AppNavigation;

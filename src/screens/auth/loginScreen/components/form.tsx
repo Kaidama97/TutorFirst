@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { styled } from 'nativewind';
 import Button from '../../../../components/button';
@@ -17,6 +17,8 @@ interface FormProps {
 }
 
 const Form: React.FC<FormProps> = ({ navigation }) => {
+
+
 
 
   const [email, setEmail] = useState<string>("");
@@ -53,8 +55,8 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
 
 
   return (
-    <StyledView className="form space-y-2">
-      <StyledTextInput
+    <View className="form space-y-2">
+      <TextInput
         placeholder="Enter your email"
         keyboardType="email-address"
         autoCapitalize="none"
@@ -62,16 +64,16 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
         onChangeText={(text) => setEmail(text)}
       />
       {!isValidEmail && <Text className="text-red-500 mt-1">Please enter a valid email address</Text>}
-      <StyledTextInput
+      <TextInput
         placeholder="Password"
         secureTextEntry
         className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
         onChangeText={(text) => setPassword(text)}
       />
       
-      <StyledTouchableOpacity className="flex items-end mb-5">
-        <StyledText>Forgot Password?</StyledText>
-      </StyledTouchableOpacity>
+      <TouchableOpacity className="flex items-end mb-5">
+        <Text>Forgot Password?</Text>
+      </TouchableOpacity>
       <Button
         type="primary"
         text="Log In"
@@ -79,15 +81,15 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
       />
 
 
-      <StyledView className="flex-row justify-center">
-        <StyledText className="text-gray-500 font-semibold">
+      <View className="flex-row justify-center">
+        <Text className="text-gray-500 font-semibold">
           Don't have an account?
-        </StyledText>
-        <StyledTouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <StyledText className="font-semibold text-yellow-500"> Click Here</StyledText>
-        </StyledTouchableOpacity>
-      </StyledView>
-    </StyledView>
+        </Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+          <Text className="font-semibold text-yellow-500"> Click Here</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
 

@@ -7,7 +7,7 @@ const StyledText = styled(Text);
 
 const Header: React.FC = () => {
   return (
-    <StyledView className="flex-row justify-center items-center">
+    <StyledView className="items-center">
       <StyledText className="text-3xl font-bold text-center text-white">
         Welcome To TutorFirst!
       </StyledText>
