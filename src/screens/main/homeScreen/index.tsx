@@ -9,10 +9,10 @@ const StyledView = styled(View);
 
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   return (
-    <StyledView className="flex-1 bg-white" style={{ backgroundColor: theme.colors.primary }}>
-      <StyledView className="flex-1 bg-white px-8 pt-8" style={{ borderTopLeftRadius: 65, borderTopRightRadius: 65 }}>
+    <StyledView className="flex-1 px-8 pt-8" style={{ borderTopLeftRadius: 65, borderTopRightRadius: 65, backgroundColor: 'white' }}>
+      
         <Home navigation={navigation} />
-      </StyledView>
+      
     </StyledView>
   );
 };
