@@ -14,6 +14,6 @@ const BookingScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         <Booking/>
     </StyledView>
   );
-}; 
+};
 
 export default BookingScreen;

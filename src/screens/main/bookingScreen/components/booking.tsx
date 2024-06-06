@@ -1,22 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import { fetchClasses } from './fetchClasses'; // Import the fetchClasses function
 
 const BookingScreen = () => {
   const [selectedClass, setSelectedClass] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [classes, setClasses] = useState<any[]>([]); // State to store fetched classes data
 
-  const availableClasses = [
-    { label: 'Yoga - 10:00 AM', value: 'yoga-10am' },
-    { label: 'Pilates - 12:00 PM', value: 'pilates-12pm' },
-    { label: 'Zumba - 2:00 PM', value: 'zumba-2pm' },
-    // Add more classes here
-  ];
+  // Fetch classes data when component mounts 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const classesData = await fetchClasses(); // Fetch classes data
 
-  const filteredClasses = availableClasses.filter((cls) =>
+        setClasses(classesData); // Update state with fetched classes data
+      } catch (error: any) { // Specify the type of error as 'any'
+        console.error('Error fetching classes:', error.message);
+      }
+    };
+
+    fetchData(); // Call fetchData function
+  }, []); // Run this effect only once when the component mounts
+
+  const filteredClasses = classes.filter((cls) =>
     cls.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleClassSelect = (value: React.SetStateAction<string>) => {
+  const handleClassSelect = (value: string) => {
     setSelectedClass(value);
     // Handle class selection logic here, such as fetching available spots for the selected class
   };
