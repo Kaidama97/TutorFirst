@@ -23,7 +23,7 @@ const BookingScreen = () => {
   }, []); // Run this effect only once when the component mounts
 
   const filteredClasses = classes.filter((cls) =>
-    cls.label.toLowerCase().includes(searchQuery.toLowerCase())
+    cls.label && cls.label.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleClassSelect = (value: string) => {
