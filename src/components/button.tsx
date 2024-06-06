@@ -10,16 +10,17 @@ interface ButtonProps {
   type: 'primary' | 'secondary';
   text: string;
   onPress: () => void;
+  color?: string; // Add color prop
 }
 
-const Button: React.FC<ButtonProps> = ({ type, text, onPress }) => {
+const Button: React.FC<ButtonProps> = ({ type, text, onPress, color }) => {
   const backgroundColor = type === "primary" ? theme.colors.buttonPrimary : theme.colors.buttonSecondary;
   const textColor = type === "primary" ? theme.colors.textPrimary : theme.colors.textSecondary;
 
   return (
     <StyledTouchableOpacity
       className="py-3 rounded-xl mx-7 mb-4"
-      style={{ backgroundColor: backgroundColor }}
+      style={{ backgroundColor: color || backgroundColor }} // Use color prop if provided, else use default theme color
       onPress={onPress}
     >
       <StyledText className="text-xl text-center text-white font-bold" style={{ color: textColor }}>

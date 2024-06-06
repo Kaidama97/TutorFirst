@@ -8,6 +8,8 @@ import Home from '../screens/main/homeScreen/index'; // Update this path as nece
 import Profile from '../screens/main/profileScreen/index'; // Update this path as necessary
 import Bookings from '../screens/main/bookingScreen/index'; // Update this path as necessary
 import Resources from '../screens/main/resourcesScreen/index'; // Update this path as necessary
+import Classes from '../screens/main/classesScreen/index'; // Update this path as necessary
+import Chat from '../screens/main/chatScreen/index'; // Import the Chat screen component
 
 const Tab = createBottomTabNavigator();
 
@@ -31,6 +33,12 @@ function MyTabs() {
             case 'Resources':
               iconName = focused ? 'book' : 'book-outline';
               break;
+            case 'Classes':
+              iconName = focused ? 'school' : 'school-outline';
+              break;
+            case 'Chat':
+              iconName = focused ? 'chatbox' : 'chatbox-outline';
+              break;
             default:
               break;
           }
@@ -43,8 +51,10 @@ function MyTabs() {
       })}
     >
       <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Classes" component={Classes} />
       <Tab.Screen name="Bookings" component={Bookings} />
       <Tab.Screen name="Resources" component={Resources} />
+      <Tab.Screen name="Chat" component={Chat} />
       <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
@@ -52,7 +62,6 @@ function MyTabs() {
 
 export default function App() {
   return (
-
       <MyTabs />
   );
 }

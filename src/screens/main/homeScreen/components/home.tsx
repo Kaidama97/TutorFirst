@@ -1,47 +1,69 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Button } from 'react-native';
 import { styled } from 'nativewind';
+import { theme } from '../../../../assets/theme/theme';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
-const StyledTouchableOpacity = styled(TouchableOpacity);
+const StyledButton = styled(Button);
 
-interface FormProps {
-  navigation: any; // Adjust the type according to the actual navigation prop type
-}
-
-const Home: React.FC<{ navigation: any }> = ({ navigation }) => {
+const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   return (
-    <StyledView className="flex-1 justify-center items-center bg-white p-6">
-      <StyledText className="text-3xl font-bold text-gray-800 mb-6">
-        Welcome to Tuition Center
-      </StyledText>
-      <StyledText className="text-lg text-gray-600 text-center mb-10">
-        Enhance your learning with our wide range of courses and expert tutors.
-      </StyledText>
+    <ScrollView style={{ flex: 1 }}>
+      
+        {/* Dashboard/Overview */}
+        <StyledView className="mb-8">
+          <StyledText className="text-2xl font-bold mb-4">Welcome to the App</StyledText>
+          <StyledText className="text-lg">Quick overview and announcements</StyledText>
+        </StyledView>
 
-      <StyledTouchableOpacity
-        className="bg-yellow-500 p-4 rounded-2xl mb-4"
-        onPress={() => navigation.navigate('Courses')}
-      >
-        <StyledText className="text-white font-semibold">Browse Courses</StyledText>
-      </StyledTouchableOpacity>
+        {/* Quick Links */}
+        <StyledView className="mb-8">
+          <StyledText className="text-xl font-semibold mb-4">Quick Links</StyledText>
+          
+          {/* Quick Link to Chat */}
+          <StyledButton
+            title="Chat Function"
+            onPress={() => navigation.navigate('Chat')}
+            color={theme.colors.secondary}
+          />
+          
+          {/* Quick Link to Classes by Subject */}
+          <StyledButton
+            title="Classes"
+            onPress={() => navigation.navigate('Classes', { filter: 'subject' })}
+            color={theme.colors.secondary}
+          />
+        </StyledView>
 
-      <StyledTouchableOpacity
-        className="bg-gray-700 p-4 rounded-2xl mb-4"
-        onPress={() => navigation.navigate('Profile')}
-      >
-        <StyledText className="text-white font-semibold">Your Profile</StyledText>
-      </StyledTouchableOpacity>
+        {/* Upcoming Bookings */}
+        <StyledView className="mb-8">
+          <StyledText className="text-xl font-semibold mb-4">Upcoming Bookings</StyledText>
+          <StyledText>No upcoming bookings</StyledText>
+          {/* This would be populated with real data */}
+        </StyledView>
 
-      <StyledTouchableOpacity
-        className="bg-blue-500 p-4 rounded-2xl mb-4"
-        onPress={() => navigation.navigate('Settings')}
-      >
-        <StyledText className="text-white font-semibold">Settings</StyledText>
-      </StyledTouchableOpacity>
-    </StyledView>
+        {/* Resources */}
+        <StyledView className="mb-8">
+          <StyledText className="text-xl font-semibold mb-4">Online Resources</StyledText>
+          <StyledButton
+            title="Access Resources"
+            onPress={() => navigation.navigate('Resources')}
+            color={theme.colors.secondary}
+          />
+        </StyledView>
+
+        {/* Achievements */}
+        <StyledView className="mb-8">
+          <StyledText className="text-xl font-semibold mb-4">Achievements</StyledText>
+          <StyledText>No achievements yet</StyledText>
+          {/* This would be populated with real data */}
+        </StyledView>
+
+
+    </ScrollView>
   );
 };
 
-export default Home;
+export default HomeScreen;
+
