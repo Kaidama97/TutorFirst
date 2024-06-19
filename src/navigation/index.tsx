@@ -15,7 +15,7 @@ const AppNavigation = () => {
 
     return (
         <NavigationContainer>
-          {auth.session && auth.username ? <BottomNavigation/> : auth.session && !auth.username ? <RegisterNavigation/> : <AuthNavigation/>}
+          {auth.session && auth.username && !auth.loading ? <BottomNavigation/> : auth.session && !auth.username ? <RegisterNavigation/> : <AuthNavigation/>}
         </NavigationContainer>
     );
 }

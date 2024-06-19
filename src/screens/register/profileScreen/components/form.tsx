@@ -40,7 +40,7 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
     const [itemsPicker2, setItemsPicker2] = useState<any[]>([]);
     const [itemsPicker3, setItemsPicker3] = useState<any[]>([]);
 
-    const { initialRegister, signOut } = useContext(AuthContext);
+    const { editProfile, signOut } = useContext(AuthContext);
     useEffect(() => {
         const fetchCountries = async () => {
             try {
@@ -106,55 +106,6 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
             </View>
         );
     };
-
-    // const handleSubmit = async () => {
-    //     setUsernameError(validateUsername(username));
-    //     setFirstNameError(validateFirstName(firstname));
-    //     setLastNameError(validateLastName(lastname));
-    //     setPhoneNumberError(validatePhoneNumber(phoneNumber));
-
-    //     if (
-    //         usernameError === null &&
-    //         firstNameError === null &&
-    //         lastNameError === null &&
-    //         phonenumberError === null &&
-    //         valuePicker1 !== "" &&
-    //         valuePicker2 !== "" &&
-    //         valuePicker3 !== "" &&
-    //         description !== "") {
-    //         if (!session?.user) {
-    //             Alert.alert('No user session available');
-    //             return;
-    //         }
-    //         try {
-
-    //             const updates = {
-    //                 userid: session?.user.id,
-    //                 username: username,
-    //                 firstname: firstname,
-    //                 lastname: lastname,
-    //                 phonenumber: phoneNumber,
-    //                 dateofbirth: birthDate,
-    //                 gender: valuePicker1,
-    //                 nationality: valuePicker2,
-    //                 school: valuePicker3,
-    //                 description: description,
-    //             }
-    //             const { data, error, status } = await supabase.from('users').upsert(updates).select();
-    //             console.log("return data: ", data, session?.user.id, status, error)
-    //             if (error) {
-    //                 throw error
-    //             }
-    //         } catch (e) {
-    //             if (e instanceof Error) {
-    //                 Alert.alert(e.message)
-    //             }
-
-
-    //         }
-
-    //     }
-    // }
     const handleSubmit = async () => {
 
         setUsernameError(validateUsername(username));
@@ -170,10 +121,10 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
             valuePicker2 !== "" &&
             valuePicker3 !== "" &&
             description !== "" &&
-            initialRegister
+            editProfile
         ) {
             try {
-                initialRegister({
+                editProfile({
                     username,
                     firstname,
                     lastname,
@@ -197,7 +148,7 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
     }
 
     return (
-        <ScrollView contentContainerStyle={('flex-grow justify-center p-4')}>
+        <ScrollView >
             {/* <KeyboardAvoidingView className="form space-y-2 bg-slate-500" > */}
             <Text className={'text-md font-bold mb-1 ml-3'}>Enter Username</Text>
             <TextInput

@@ -1,15 +1,17 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '../initSupabase';
 import { Session, AuthChangeEvent, User } from '@supabase/supabase-js';
-import {  Alert } from 'react-native';
+import { Alert } from 'react-native';
 
 type ContextProps = {
   user: null | boolean;
   session: Session | null;
   username: string | null;
   loading: boolean;
+  userData: UserProps | null;
   signOut: () => void;
-  initialRegister: (registerProps: RegisterProps) => Promise<void>;
+  refreshUserData: () => void;
+  editProfile: (editProfileProps: EditProfileProps) => Promise<void>;
 };
 
 const AuthContext = createContext<Partial<ContextProps>>({});
@@ -18,10 +20,10 @@ interface Props {
   children: React.ReactNode;
 }
 
-interface RegisterProps {
+interface EditProfileProps {
   username: string;
   firstname: string;
-  lastname: string
+  lastname: string;
   phonenumber: string;
   dateOfBirth: Date;
   gender: string;
@@ -30,29 +32,39 @@ interface RegisterProps {
   description: string;
 }
 
+interface UserProps {
+  username: string;
+  firstname: string;
+  lastname: string;
+  phonenumber: string;
+  dateofbirth: Date;
+  gender: string;
+  nationality: string;
+  school: string;
+  description: string;
+}
+
 const AuthProvider = (props: Props) => {
-  // user null = loading
   const [user, setUser] = useState<null | boolean>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [username, setUsername] = useState<string | null>(null);
+  const [userData, setUserData] = useState<UserProps | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const getUsername = async (sessionUser: User | undefined) => {
+  const getUserData = async (sessionUser: User | undefined) => {
     if (!sessionUser) return;
     try {
-
-      console.log("is loading?", loading);
-      const { data, error, status } = await supabase
+      const { data, error } = await supabase
         .from('users')
-        .select('username')
+        .select('username, firstname, lastname, phonenumber, dateofbirth, gender, nationality, school, description')
         .eq('userid', sessionUser.id)
         .single();
-      console.log("get username", data, status);
       if (error) {
         throw error;
       }
       if (data) {
         setUsername(data.username);
+        setUserData(data);
       }
     } catch (error) {
       console.error(error);
@@ -62,29 +74,28 @@ const AuthProvider = (props: Props) => {
   };
 
   const fetchSession = async () => {
+    setLoading(true);
     const { data, error } = await supabase.auth.getSession();
     if (error) {
       console.error('Error fetching session:', error);
+      setLoading(false);
     } else {
       setSession(data.session);
       setUser(data.session ? true : false);
-      await getUsername(data.session?.user);
-      console.log("fetch", data.session, user, username);
+      await getUserData(data.session?.user);
+      setLoading(false); // Set loading to false when done
     }
   };
 
   useEffect(() => {
-
-
     fetchSession();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event: AuthChangeEvent, session: Session | null) => {
-        console.log(`Supabase auth event: ${event}`);
         setSession(session);
         setUser(session ? true : false);
-        await getUsername(session?.user);
-        console.log("on auth change", session, user, username);
+        await getUserData(session?.user);
+        setLoading(false);
       }
     );
     return () => {
@@ -98,19 +109,16 @@ const AuthProvider = (props: Props) => {
       if (error) {
         throw error;
       }
+      setLoading(true);
       setUser(null);
       setSession(null);
       setUsername(null);
-      
     } catch (error) {
       console.log(error);
     }
+  };
 
-
-  }
-
-
-  const initialRegister = async ({
+  const editProfile = async ({
     username,
     firstname,
     lastname,
@@ -120,7 +128,7 @@ const AuthProvider = (props: Props) => {
     nationality,
     school,
     description
-  }: RegisterProps): Promise<void> => {
+  }: EditProfileProps): Promise<void> => {
     if (!session?.user) {
       Alert.alert('No user session available');
       return;
@@ -137,22 +145,27 @@ const AuthProvider = (props: Props) => {
         nationality: nationality,
         school: school,
         description: description,
-      }
+      };
       const { data, error } = await supabase.from('users').upsert(updates).select();
       if (error) {
-        throw error
+        throw error;
       } else {
         setUsername(username);
+        await getUserData(session?.user); // Refresh user data
       }
     } catch (e) {
       if (e instanceof Error) {
-        Alert.alert(e.message)
+        Alert.alert(e.message);
       }
-
     }
-  }
+  };
 
-  
+  const refreshUserData = useCallback(() => {
+    if (session?.user) {
+      getUserData(session.user);
+    }
+  }, [userData]);
+
   return (
     <AuthContext.Provider
       value={{
@@ -160,9 +173,10 @@ const AuthProvider = (props: Props) => {
         session,
         username,
         loading,
+        userData,
         signOut,
-        initialRegister,
-
+        editProfile,
+        refreshUserData,
       }}
     >
       {props.children}
