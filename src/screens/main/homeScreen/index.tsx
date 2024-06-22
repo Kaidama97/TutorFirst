@@ -1,18 +1,50 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
 import { styled } from 'nativewind';
 import { theme } from '../../../assets/theme/theme';
 //import MainNavBar from '../../../navigation/mainNavBar'; // Import the MainNavBar component
 import Home from './components/home';
 import { Ionicons } from '@expo/vector-icons';
+import { AuthContext } from '@/src/provider/authProvider';
+import { fetchClasses } from '../classesScreen/components/fetchUserClasses';
 
 
 const StyledView = styled(View);
 
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+  const [classes, setClasses] = useState<any[]>([]); // Define type for classes state
+  const [loading, setLoading] = useState(true); // State to manage loading indicator
+  const { session } = useContext(AuthContext);
   const handleCardPress = (screen: string) => {
     // navigation.navigate(screen);
   };
+
+  const fetchUserClasses = async () => {
+    if (!session?.user?.id) {
+      console.error('User ID not found');
+      setLoading(false); // Set loading state to false on error
+      return;
+    }
+
+    try {
+      const userId = session.user.id; // Assuming userId is accessible from user object in AuthContext
+      if (!userId) {
+        throw new Error('User ID not found');
+      }
+
+      const classesData = await fetchClasses(userId);
+      setClasses(classesData);
+      setLoading(false); // Set loading state to false after data is fetched
+    } catch (error) {
+      console.error('Error fetching user classes:', error);
+      setLoading(false); // Ensure loading state is set to false on error
+    }
+  };
+
+  useEffect(() => {
+   fetchUserClasses;
+   console.log(classes)
+  },[]);
 
   return (
     <ScrollView className='flex-1 '>
