@@ -44,7 +44,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   useEffect(() => {
    fetchUserClasses;
    console.log(classes)
-  },[]);
+},[]);
 
   return (
     <ScrollView className='flex-1 '>

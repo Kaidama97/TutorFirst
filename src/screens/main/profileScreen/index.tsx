@@ -1,17 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Button, Alert, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, Button, ScrollView } from 'react-native';
 import { AuthContext } from "@/src/provider/authProvider";
 import { supabase } from '@/src/initSupabase';
-import TopSection from './components/topSection';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Modal from 'react-native-modal';
-import TextField from './components/textField';
+import ProfilePicture from './components/profilePicture';
+
 import EditProfileModal from './components/editProfileModal';
+import UserInfo from './components/userInfo';
+import ClassesComponent from './components/classesComponent';
 const ProfileScreen = () => {
 
-  const { signOut, userData, refreshUserData} = useContext(AuthContext);
-  const [isModalVisible, setModalVisible] = useState(false);
+  const { signOut, userData, refreshUserData } = useContext(AuthContext);
+
   const [userProfile, setUserProfile] = useState(userData);
+
+
 
   const handleSignOut = () => {
     if (signOut) {
@@ -19,48 +21,50 @@ const ProfileScreen = () => {
     }
   };
 
+
+  // useEffect(() => {
+  //     setUserProfile(userData);
+
+  // }, []);
+
+
   useEffect(() => {
     if (refreshUserData) {
       refreshUserData;
       setUserProfile(userData);
+
     }
   }, [refreshUserData]);
 
 
 
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
 
+  const formatDate = (dateString: string | number | Date) => {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: 'short' };
+    return date.toLocaleDateString('en-US', options);
   };
   return (
     <ScrollView className="flex-1 p-5">
-      <View className='flex-row items-center mb-4'>
-        <TopSection />
-        <View className='flex-col justify-center pl-5'>
-          <Text className='text-2xl font-bold'> {userProfile?.username} </Text>
-          <Text className='text-md text-gray-600'> {userProfile?.school}</Text>
+      <View className='justify-center items-center mb-3'>
+        <ProfilePicture />
 
-        </View>
-        <TouchableOpacity onPress={toggleModal}>
-          <Icon name="pencil" size={25} color="black" />
-        </TouchableOpacity>
       </View>
-      <View className='flex-auto mt-5'>
-        <TextField label='First Name: ' data={userProfile?.firstname} />
-        <TextField label='Last Name: ' data={userProfile?.lastname} />
-        <TextField label='Date Of Birth: ' data={ userProfile?.dateofbirth } />
-        <TextField label='Nationality: ' data={userProfile?.nationality} />
-        <TextField label='Phone Number: ' data={userProfile?.phonenumber} />
-        <TextField label='Description: ' data={userProfile?.description} />
-        <View className='items-end justify-center mb-10 flex-row'>
-          <Button
-            title="Log Out"
-            onPress={handleSignOut}
-          />
-        </View>
+      <View className='flex-1 justify-center items-center mb-5'>
+        <Text className='text-3xl font-bold'>{userProfile?.username}</Text>
+        <Text className='text-lg text-gray-600'>{userProfile?.description}</Text>
+        <Text className='text-sm text-gray-600'>Member since: {userProfile?.createdat ? formatDate(userProfile.createdat) : 'N/A'}</Text>
       </View>
-      <EditProfileModal userData={ userProfile } isModalVisible={isModalVisible} toggleModal={toggleModal} />
+
+      <ClassesComponent />
+      <UserInfo userProfile={userProfile} />
+      <View className='flex-1 mb-4 p-4'>
+        <Button
+          title="Log Out"
+          onPress={handleSignOut}
+        />
+      </View>
 
     </ScrollView>
   );

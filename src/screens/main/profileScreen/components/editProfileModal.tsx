@@ -37,7 +37,7 @@ const EditProfileModal: React.FC<EditProfileProp> = ({ userData, isModalVisible,
     const [nationalityPicker, setNationalityPicker] = useState<any[]>([]);
     const [schoolPicker, setSchoolPicker] = useState<any[]>([]);
 
-    const { editProfile, refreshUserData} = useContext(AuthContext);
+    const { editProfile, refreshUserData } = useContext(AuthContext);
 
     const fetchCountries = async () => {
         try {
@@ -303,8 +303,8 @@ const EditProfileModal: React.FC<EditProfileProp> = ({ userData, isModalVisible,
                             <TextInput
                                 multiline
                                 numberOfLines={5} // Set the number of lines you want to display initially
-                                placeholder = { description }
-                                value = { description }
+                                placeholder={description}
+                                value={description}
                                 className='p-2 bg-gray-100 text-gray-700 rounded-xl mb-2'
                                 onChangeText={(text) => {
                                     setDescription(text);
@@ -317,7 +317,10 @@ const EditProfileModal: React.FC<EditProfileProp> = ({ userData, isModalVisible,
 
                             {schoolValue === "" && <Text className={'text-red-500 ml-2 mb-1'}>Select your school</Text>}
                             <View className='items-end mb-10 flex-row justify-end'>
-                                <Button title="Update" onPress={handleSubmit} />
+                                <View className='mr-2'>
+                                    <Button title="Update" onPress={handleSubmit} />
+                                </View>
+
                                 <Button title="Close" onPress={toggleModal} />
                             </View>
                         </ScrollView>

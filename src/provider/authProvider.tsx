@@ -42,6 +42,7 @@ interface UserProps {
   nationality: string;
   school: string;
   description: string;
+  createdat: Date;
 }
 
 const AuthProvider = (props: Props) => {
@@ -56,7 +57,7 @@ const AuthProvider = (props: Props) => {
     try {
       const { data, error } = await supabase
         .from('users')
-        .select('username, firstname, lastname, phonenumber, dateofbirth, gender, nationality, school, description')
+        .select('username, firstname, lastname, phonenumber, dateofbirth, gender, nationality, school, description, createdat')
         .eq('userid', sessionUser.id)
         .single();
       if (error) {
