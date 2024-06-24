@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Button as RNButton, Alert } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Import FontAwesome icons
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Button as RNButton, Alert, Image, Modal } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { styled } from 'nativewind';
-import { AuthContext } from '@/src/provider/authProvider'; // Import the AuthContext
-import { fetchClasses } from './fetchClasses'; // Import the fetchClasses function
-import { addClassAttendee } from './insertClasses'; // Import the addClassAttendee function
+import { AuthContext } from '@/src/provider/authProvider';
+import { fetchClasses } from './fetchClasses';
+import { addClassAttendee } from './insertClasses';
+import ProfilePicture from './profilePicture'; // Import ProfilePicture component
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -13,24 +14,25 @@ const StyledScrollView = styled(ScrollView);
 const StyledTouchableOpacity = styled(TouchableOpacity);
 
 const BookingScreen = () => {
-  const { session } = useContext(AuthContext); // Access user session from AuthContext
+  const { session } = useContext(AuthContext);
   const [selectedClass, setSelectedClass] = useState<any>(null);
+  const [selectedTeacher, setSelectedTeacher] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [classes, setClasses] = useState<any[]>([]); // State to store fetched classes data
+  const [classes, setClasses] = useState<any[]>([]);
+  const [modalVisible, setModalVisible] = useState<boolean>(false); // State to control modal visibility
 
-  // Fetch classes data when component mounts 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const classesData = await fetchClasses(); // Fetch classes data
-        setClasses(classesData); // Update state with fetched classes data
-      } catch (error: any) { // Specify the type of error as 'any'
+        const classesData = await fetchClasses();
+        setClasses(classesData);
+      } catch (error: any) {
         console.error('Error fetching classes:', error.message);
       }
     };
 
-    fetchData(); // Call fetchData function
-  }, []); // Run this effect only once when the component mounts
+    fetchData();
+  }, []);
 
   const filteredClasses = classes.filter((cls) =>
     cls.description && cls.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -42,11 +44,18 @@ const BookingScreen = () => {
 
   const closeModal = () => {
     setSelectedClass(null);
+    setSelectedTeacher(null);
+    setModalVisible(false); // Close the modal
+  };
+
+  const handleTeacherSelect = (teacher: any) => {
+    setSelectedTeacher(teacher);
+    setModalVisible(true); // Open the modal when a teacher is selected
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const options = { weekday: 'long'/*, year: 'numeric', month: 'long', day: 'numeric' */} as const;
+    const options = { weekday: 'long' } as const;
     return date.toLocaleDateString(undefined, options);
   };
 
@@ -97,14 +106,10 @@ const BookingScreen = () => {
     }
 
     try {
-      await addClassAttendee(session?.user.id, cls.classid); // Call addClassAttendee with userId and classId
-
-      // Example: Update UI or fetch new classes after booking
+      await addClassAttendee(session?.user.id, cls.classid);
       console.log('Successfully booked class:', cls.classid);
-      // Perform additional UI updates or data refetching as needed
     } catch (error: any) {
       console.error('Error booking class:', error.message);
-      // Handle error or display error message to user
     }
   };
 
@@ -130,32 +135,34 @@ const BookingScreen = () => {
               style={{ backgroundColor: '#ffffff', borderRadius: 15 }}
             >
               <StyledView className="flex-row justify-between items-center">
-                <StyledView style={{ flexDirection: 'row', alignItems: 'center', width: '70%' }}>
-                  <StyledView>
-                    <StyledText className="font-bold mb-2" style={{ color: '#333333' }}>{cls.description} ({firstName})</StyledText>
-                    <View style={{ marginTop: 5 }}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Icon name="map-marker" size={20} color="black" />
-                        <StyledText style={{ marginLeft: 12, color: '#666666' }}>{cls.location}</StyledText>
-                      </View>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
-                        <Icon name="calendar" size={20} color="black" />
-                        <StyledText style={{ marginLeft: 5, color: '#666666' }}>{formatDate(cls.class_date)}</StyledText>
-                      </View>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
-                        <Icon name="clock-o" size={20} color="black" />
-                        <StyledText style={{ marginLeft: 5, color: '#666666' }}>
-                          {formatTime(cls.start_time)} ({calculateDuration(cls.start_time, cls.end_time)})
-                        </StyledText>
-                      </View>
+                <StyledView style={{ flexDirection: 'column', flex: 1 }}>
+                  <StyledText className="font-bold mb-2" style={{ color: '#333333' }}>
+                    {cls.description}
+                    <StyledTouchableOpacity onPress={() => handleTeacherSelect(tutor.users)}>
+                      <StyledText style={{ color: '#1E90FF' }}> ({firstName})</StyledText>
+                    </StyledTouchableOpacity>
+                  </StyledText>
+                  <View style={{ marginTop: 5 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Icon name="map-marker" size={20} color="black" />
+                      <StyledText style={{ marginLeft: 12, color: '#666666' }}>{cls.location}</StyledText>
                     </View>
-                    <StyledText style={[{ marginTop: 5, fontWeight: 'bold' }, getSlotStyle(cls.class_size - cls.classattendee.length)]}>
-                      Slots Available: {cls.class_size - cls.classattendee.length}
-                    </StyledText>
-                  </StyledView>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
+                      <Icon name="calendar" size={20} color="black" />
+                      <StyledText style={{ marginLeft: 5, color: '#666666' }}>{formatDate(cls.class_date)}</StyledText>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
+                      <Icon name="clock-o" size={20} color="black" />
+                      <StyledText style={{ marginLeft: 5, color: '#666666' }}>
+                        {formatTime(cls.start_time)} ({calculateDuration(cls.start_time, cls.end_time)})
+                      </StyledText>
+                    </View>
+                  </View>
+                  <StyledText style={[{ marginTop: 5, fontWeight: 'bold' }, getSlotStyle(cls.class_size - cls.classattendee.length)]}>
+                    Slots Available: {cls.class_size - cls.classattendee.length}
+                  </StyledText>
                 </StyledView>
                 <View style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                  <RNButton title="View Details" onPress={() => handleClassSelect(cls)} />
                   <View style={{ marginTop: 10 }}>
                     <RNButton title="Book" onPress={() => confirmBooking(cls)} />
                   </View>
@@ -165,21 +172,22 @@ const BookingScreen = () => {
           );
         })}
       </StyledScrollView>
-      {selectedClass && (
-        <StyledView className="absolute top-5 left-5 w-full h-full bg-opacity-50 bg-gray-800 flex justify-center items-center">
-          <StyledView className="bg-white p-5 rounded-lg" style={{ width: '90%', borderRadius: 15 }}>
-            <StyledText className="text-lg font-bold mb-2">{selectedClass.description} ({selectedClass.teacher})</StyledText>
-            <StyledText>Location: {selectedClass.location}</StyledText>
-            <StyledText>Date: {formatDate(selectedClass.class_date)}</StyledText>
-            <StyledText>Start Time: {formatTime(selectedClass.start_time)} (Duration: {calculateDuration(selectedClass.start_time, selectedClass.end_time)})</StyledText>
-            <StyledText>Slots Available: {selectedClass.class_size - selectedClass.classattendee.length}</StyledText>
-            <RNButton title="Book Here" onPress={() => confirmBooking(selectedClass)} />
-            <View style={{ marginTop: 10 }}>
-              <RNButton title="Close" onPress={closeModal} />
-            </View>
-          </StyledView>
-        </StyledView>
-      )}
+
+      {/* Modal to display selected teacher's profile */}
+      <Modal visible={modalVisible} animationType="slide">
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    {selectedTeacher && ( 
+      <View style={{ alignItems: 'center' }}>
+        <ProfilePicture userid={selectedTeacher.userid} />
+        <StyledText className="text-lg font-bold mb-2"><Text>{selectedTeacher.firstname}</Text></StyledText>
+        <StyledText><Text>Bio: {selectedTeacher.description}</Text></StyledText>
+        <View style={{ marginTop: 10 }}>
+          <RNButton title="Close" onPress={closeModal} />
+        </View>
+      </View>
+    )}
+  </View>
+</Modal>
     </StyledView>
   );
 };
