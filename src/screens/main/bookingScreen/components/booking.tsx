@@ -1,10 +1,10 @@
+// BookingScreen.tsx
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Button as RNButton, Alert, Image, Modal } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Modal, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { styled } from 'nativewind';
 import { AuthContext } from '@/src/provider/authProvider';
 import { fetchClasses } from './fetchClasses';
-import { addClassAttendee } from './insertClasses';
 import ProfilePicture from './profilePicture'; // Import ProfilePicture component
 
 const StyledView = styled(View);
@@ -13,7 +13,7 @@ const StyledTextInput = styled(TextInput);
 const StyledScrollView = styled(ScrollView);
 const StyledTouchableOpacity = styled(TouchableOpacity);
 
-const BookingScreen = () => {
+const BookingScreen = ({ navigation }: { navigation: any }) => {
   const { session } = useContext(AuthContext);
   const [selectedClass, setSelectedClass] = useState<any>(null);
   const [selectedTeacher, setSelectedTeacher] = useState<any>(null);
@@ -40,6 +40,7 @@ const BookingScreen = () => {
 
   const handleClassSelect = (cls: any) => {
     setSelectedClass(cls);
+    setModalVisible(true); // Open the modal when a class is selected
   };
 
   const closeModal = () => {
@@ -82,39 +83,8 @@ const BookingScreen = () => {
     }
   };
 
-  const confirmBooking = (cls: any) => {
-    Alert.alert(
-      "Confirm Booking",
-      `Are you sure you want to book the class "${cls.description}"?`,
-      [
-        {
-          text: "No",
-          style: "cancel"
-        },
-        {
-          text: "Yes",
-          onPress: () => bookClass(cls)
-        }
-      ]
-    );
-  };
-
-  const bookClass = async (cls: any) => {
-    if (!session?.user.id) {
-      console.error('User ID not found');
-      return;
-    }
-
-    try {
-      await addClassAttendee(session?.user.id, cls.classid);
-      console.log('Successfully booked class:', cls.classid);
-    } catch (error: any) {
-      console.error('Error booking class:', error.message);
-    }
-  };
-
   return (
-    <StyledView className="flex-1 p-5" style={{ backgroundColor: '#B0C4DE' }}>
+    <StyledView className="flex-1 p-5" style={{ backgroundColor: '#F0F0F0' }}>
       <StyledTextInput
         className="h-10 border border-gray-400 mb-2 px-2"
         placeholder="Search for a class"
@@ -130,18 +100,30 @@ const BookingScreen = () => {
           return (
             <StyledTouchableOpacity
               key={cls.classid}
-              onPress={() => handleClassSelect(cls)}
+              onPress={() => navigation.navigate('ClassDetails', { selectedClass: cls })}
               className="p-4 mb-4 bg-white rounded-2xl shadow-md border border-gray-300"
-              style={{ backgroundColor: '#ffffff', borderRadius: 15 }}
+              style={{
+                backgroundColor: '#ffffff',
+                borderRadius: 15,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5,
+              }}
             >
               <StyledView className="flex-row justify-between items-center">
                 <StyledView style={{ flexDirection: 'column', flex: 1 }}>
                   <StyledText className="font-bold mb-2" style={{ color: '#333333' }}>
-                    {cls.description}
+                    {cls.title}
                     <StyledTouchableOpacity onPress={() => handleTeacherSelect(tutor.users)}>
                       <StyledText style={{ color: '#1E90FF' }}> ({firstName})</StyledText>
                     </StyledTouchableOpacity>
                   </StyledText>
+                  <StyledView style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
+                    <Icon name="graduation-cap" size={20} color="black" />
+                    <StyledText style={{ marginLeft: 5, color: '#666666' }}>{cls.level}</StyledText>
+                  </StyledView>
                   <View style={{ marginTop: 5 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <Icon name="map-marker" size={20} color="black" />
@@ -162,32 +144,27 @@ const BookingScreen = () => {
                     Slots Available: {cls.class_size - cls.classattendee.length}
                   </StyledText>
                 </StyledView>
-                <View style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                  <View style={{ marginTop: 10 }}>
-                    <RNButton title="Book" onPress={() => confirmBooking(cls)} />
-                  </View>
-                </View>
               </StyledView>
             </StyledTouchableOpacity>
           );
         })}
       </StyledScrollView>
 
-      {/* Modal to display selected teacher's profile */}
-      <Modal visible={modalVisible} animationType="slide">
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    {selectedTeacher && ( 
-      <View style={{ alignItems: 'center' }}>
-        <ProfilePicture userid={selectedTeacher.userid} />
-        <StyledText className="text-lg font-bold mb-2"><Text>{selectedTeacher.firstname}</Text></StyledText>
-        <StyledText><Text>Bio: {selectedTeacher.description}</Text></StyledText>
-        <View style={{ marginTop: 10 }}>
-          <RNButton title="Close" onPress={closeModal} />
-        </View>
-      </View>
-    )}
-  </View>
-</Modal>
+       {/* Modal to display selected teacher's profile */}
+       <Modal visible={modalVisible} animationType="slide">
+        <StyledView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F0F0F0' }}>
+          {selectedTeacher && ( 
+            <StyledView style={{ alignItems: 'center', backgroundColor: '#ffffff', padding: 20, borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 }}>
+              <ProfilePicture userid={selectedTeacher.userid} />
+              <StyledText className="text-lg font-bold mb-2"><Text>{selectedTeacher.firstname}</Text></StyledText>
+              <StyledText><Text>Bio: {selectedTeacher.description}</Text></StyledText>
+              <View style={{ marginTop: 10 }}>
+                <Button title="Close" onPress={closeModal} />
+              </View>
+            </StyledView>
+          )}
+        </StyledView>
+      </Modal>
     </StyledView>
   );
 };

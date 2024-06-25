@@ -13,8 +13,8 @@ const StyledView = styled(View);
 const BookingScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   return (
     <AuthProvider>
-    <StyledView className="flex-1" /*px-2 pt-2"*/ /*style={{ borderTopLeftRadius: 65, borderTopRightRadius: 65, backgroundColor: 'white' }}*/>
-        <Booking/>
+    <StyledView className="flex-1">
+        <Booking navigation={navigation} />
     </StyledView>
     </AuthProvider>
   );
