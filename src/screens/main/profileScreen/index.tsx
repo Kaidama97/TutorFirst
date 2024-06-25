@@ -20,14 +20,6 @@ const ProfileScreen = () => {
       signOut();
     }
   };
-
-
-  // useEffect(() => {
-  //     setUserProfile(userData);
-
-  // }, []);
-
-
   useEffect(() => {
     if (refreshUserData) {
       refreshUserData;

@@ -1,13 +1,13 @@
-import { View, Button, Text, TextInput, TouchableOpacity, Platform, Modal, KeyboardAvoidingView, ScrollView, Alert } from 'react-native';
+import { View, Button, Text, TextInput, TouchableOpacity, Platform, Modal, StyleSheet, ScrollView, Alert } from 'react-native';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Dropdown } from 'react-native-element-dropdown';
+import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
 import { COUNTRIES_URL } from '@env';
-import { validatePhoneNumber, validateFirstName, validateLastName, validateUsername, handleGenderJson, handleCountriesJson, handleSchoolJson } from '../functions/function';
+import { validatePhoneNumber, validateFirstName, validateLastName, validateUsername, handleGenderJson, handleCountriesJson, handleSchoolJson, handleSubjectJson } from '../functions/function';
 import ButtonComponent from '@/src/components/button';
 import { AuthContext } from "@/src/provider/authProvider";
-
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 interface FormProps {
     navigation: any; // Adjust the type according to the actual navigation prop type
 }
@@ -18,6 +18,7 @@ interface Item {
 }
 const gender = require('../../../../constants/gender.json');
 const school = require('../../../../constants/schoolData.json');
+const allSubjects = require('../../../../constants/subjects.json');
 
 const Form: React.FC<FormProps> = ({ navigation }) => {
 
@@ -39,6 +40,8 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
     const [itemsPicker1, setItemsPicker1] = useState<any[]>([]);
     const [itemsPicker2, setItemsPicker2] = useState<any[]>([]);
     const [itemsPicker3, setItemsPicker3] = useState<any[]>([]);
+    const [subjectsValue, setSubjectsValue] = useState<any[]>([]);
+    const [selectedSubjects, setSelectedSubjects] = useState<any[]>([]);
 
     const { editProfile, signOut } = useContext(AuthContext);
     useEffect(() => {
@@ -64,16 +67,13 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
 
             setItemsPicker1(handleGenderJson(gender));
             setItemsPicker3(handleSchoolJson(school));
+            setSubjectsValue(handleSubjectJson(allSubjects));
         }
 
 
         formatJson();
         fetchCountries();
     }, []);
-
-
-
-
 
     const showDatePicker = () => {
         setDatePickerVisibility(true);
@@ -134,6 +134,7 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
                     nationality: valuePicker2,
                     school: valuePicker3,
                     description,
+                    favourite_subjects: selectedSubjects,
                 });
 
             } catch (error) {
@@ -146,7 +147,6 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
         signOut;
 
     }
-
     return (
         <ScrollView >
             {/* <KeyboardAvoidingView className="form space-y-2 bg-slate-500" > */}
@@ -186,6 +186,35 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
                 value={lastname}
             />
             {lastNameError != null && <Text className={'text-red-500 ml-2 mb-1'}>{lastNameError}</Text>}
+
+            <View style={styles.container}>
+                <MultiSelect
+                    style={styles.dropdown}
+                    placeholderStyle={styles.placeholderStyle}
+                    selectedTextStyle={styles.selectedTextStyle}
+                    inputSearchStyle={styles.inputSearchStyle}
+                    iconStyle={styles.iconStyle}
+                    search
+                    data={subjectsValue}
+                    labelField="label"
+                    valueField="value"
+                    placeholder="Select favourite subjects"
+                    searchPlaceholder="Search..."
+                    value={selectedSubjects}
+                    onChange={item => {
+                        setSelectedSubjects(item);
+                    }}
+                    renderLeftIcon={() => (
+                        <Icon
+                            style={styles.icon}
+                            color="book-education-outline"
+                            name="book-education-outline"
+                            size={20}
+                        />
+                    )}
+                    selectedStyle={styles.selectedStyle}
+                />
+            </View>
 
             <Text className={'text-md font-bold mb-2 ml-3'}>Enter phone number</Text>
             <TextInput
@@ -343,3 +372,32 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
 };
 export default Form;
 
+const styles = StyleSheet.create({
+    container: { padding: 16 },
+    dropdown: {
+        height: 50,
+        backgroundColor: 'transparent',
+        borderBottomColor: '#909090',
+        borderBottomWidth: 0.5,
+    },
+    placeholderStyle: {
+        fontSize: 16,
+    },
+    selectedTextStyle: {
+        fontSize: 14,
+    },
+    iconStyle: {
+        width: 20,
+        height: 20,
+    },
+    inputSearchStyle: {
+        height: 40,
+        fontSize: 16,
+    },
+    icon: {
+        marginRight: 5,
+    },
+    selectedStyle: {
+        borderRadius: 12,
+    },
+});

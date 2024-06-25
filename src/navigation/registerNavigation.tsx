@@ -18,7 +18,7 @@ const RegisterNavigation: React.FC = () => {
     const { loading } = useContext(AuthContext);
 
     return (
-        <RegisterStack.Navigator>
+        <RegisterStack.Navigator initialRouteName='Loading'>
             {loading ? (
                 <RegisterStack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }} />
             ) : (

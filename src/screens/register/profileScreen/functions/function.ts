@@ -18,6 +18,10 @@ interface School {
     school_name: string;
 
 }
+interface Subject {
+  title: string;
+
+}
 interface FormattedJson {
     value: string;
     label: string;
@@ -44,6 +48,12 @@ export const handleSchoolJson = (data: School[]): FormattedJson[] => {
         value: data.school_name,
         label: data.school_name
     }));
+} 
+export const handleSubjectJson = (data: Subject[]): FormattedJson[] => {
+  return data.map((data) => ({
+      value: data.title,
+      label: data.title
+  }));
 } 
 
 export const validateUsername = (username: string): string | null => {

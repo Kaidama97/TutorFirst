@@ -3,9 +3,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { AuthContext, AuthProvider } from '../provider/authProvider';
 
 import AuthNavigation from './AuthNavigation';
-import MainNavigation from './MainNavigation';
+
 import RegisterNavigation from './registerNavigation';
-import BottomNavigation from './bottomNavigation';
+import MainNavigation from './mainNavigation';
+import LoadingScreen from '../screens/register/loadingScreen';
 
 const AppNavigation = () => {
 
@@ -13,12 +14,17 @@ const AppNavigation = () => {
     const user = auth.user;
     console.log("Auth: " + auth.session + " User " + user + " username:" + auth.username);
 
-    return (
-        <NavigationContainer>
-          {auth.session && auth.username && !auth.loading ? <BottomNavigation/> : auth.session && !auth.username ? <RegisterNavigation/> : <AuthNavigation/>}
-        </NavigationContainer>
-    );
+    if (auth.loading) {
+      return <LoadingScreen />;
+  }
+
+  return (
+      <NavigationContainer>
+        {auth.session && auth.username ? <MainNavigation/> : auth.session && !auth.username ? <RegisterNavigation/> : <AuthNavigation/>}
+      </NavigationContainer>
+  );
 }
+
 
 
 export default AppNavigation;

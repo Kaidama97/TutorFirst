@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View } from 'react-native';
 import { styled } from 'nativewind';
 import Button from '../../../../components/button';
+import { AuthContext } from '@/src/provider/authProvider';
 
 const StyledView = styled(View);
 
@@ -10,17 +11,23 @@ interface ButtonComponentProps {
 }
 
 const ButtonComponent: React.FC<ButtonComponentProps> = ({ navigation }) => {
+  const { handleWelcomePressed } = useContext(AuthContext);
+
+  const handleButtonPressed = (screenName: string) => {
+    handleWelcomePressed;
+    navigation.navigate(screenName);
+  }
   return (
     <StyledView className="space-y-3">
       <Button
         type="primary"
         text="Sign In"
-        onPress={() => navigation.navigate('Login')}
+        onPress={() => handleButtonPressed('Login')}
       />
       <Button
         type="primary"
         text="Sign Up"
-        onPress={() => navigation.navigate('Register')}
+        onPress={() => handleButtonPressed('Register')}
       />
     </StyledView>
   );

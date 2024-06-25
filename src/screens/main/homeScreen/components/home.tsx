@@ -28,23 +28,13 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const randomIndex = Math.floor(Math.random() * quotes.length);
     return quotes[randomIndex];
   };
-  const classes = [
-    { title: 'Math 101', description: 'Introduction to Algebra' },
-    { title: 'Science 202', description: 'Physics for Beginners' },
-    { title: 'History 303', description: 'World War II' },
-  ];
 
 
   const screenHeight = Dimensions.get('window').height;
-  const bannerHeight = screenHeight / 5;
+  const bannerHeight = screenHeight / 4;
   const greeting = getGreeting();
   const quote = getRandomQuote();
-  // const renderItem = ({ item }) => (
-  //   <View className="bg-white rounded-lg p-4 mx-2 shadow-lg">
-  //     <Text className="text-lg font-bold">{item.title}</Text>
-  //     <Text className="text-base mt-2">{item.description}</Text>
-  //   </View>
-  // )
+
 
   return (
 

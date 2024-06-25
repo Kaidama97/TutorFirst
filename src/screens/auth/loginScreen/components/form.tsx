@@ -5,6 +5,7 @@ import Button from '../../../../components/button';
 
 import { supabase } from '../../../../initSupabase';
 import { AuthContext } from "@/src/provider/authProvider";
+import { AuthApiError } from "@supabase/supabase-js";
 
 const StyledView = styled(View);
 const StyledTextInput = styled(TextInput);
@@ -18,8 +19,8 @@ interface FormProps {
 
 const Form: React.FC<FormProps> = ({ navigation }) => {
 
-
-
+  
+const { handleLogin } = useContext(AuthContext);
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -31,23 +32,21 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
     return emailRegex.test(email);
   };
 
-  async function login() {
+  const login = async () => {
     if(validateEmail(email)) {
       setIsValidEmail(true);
       setLoading(true);
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-      });
-      if (!error && !data) {
-        setLoading(false);
-        
-      }
-      if (error) {
-        setLoading(false);
-        alert(error.message);
-      } 
+        if (handleLogin) {
+          try {
+            await handleLogin(email, password);
+          } catch (error) {
 
+            console.log(error);
+            alert("Invaild Credentials");
+          }
+          
+        } 
+      
     } else {
       setIsValidEmail(false);
     }

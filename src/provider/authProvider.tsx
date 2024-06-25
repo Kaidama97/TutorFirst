@@ -8,10 +8,13 @@ type ContextProps = {
   session: Session | null;
   username: string | null;
   loading: boolean;
+  isWelcomeCompleted: boolean;
   userData: UserProps | null;
   signOut: () => void;
   refreshUserData: () => void;
   editProfile: (editProfileProps: EditProfileProps) => Promise<void>;
+  handleLogin: (email: string, password: string) => Promise<void>;
+  handleWelcomePressed: () => void;
 };
 
 const AuthContext = createContext<Partial<ContextProps>>({});
@@ -30,6 +33,7 @@ interface EditProfileProps {
   nationality: string;
   school: string;
   description: string;
+  favourite_subjects: string[];
 }
 
 interface UserProps {
@@ -45,16 +49,21 @@ interface UserProps {
   createdat: Date;
 }
 
+
+
 const AuthProvider = (props: Props) => {
   const [user, setUser] = useState<null | boolean>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserProps | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isWelcomeCompleted, setIsWelcomeCompleted] = useState<boolean>(false);
 
   const getUserData = async (sessionUser: User | undefined) => {
+    setLoading(true);
     if (!sessionUser) return;
     try {
+
       const { data, error } = await supabase
         .from('users')
         .select('username, firstname, lastname, phonenumber, dateofbirth, gender, nationality, school, description, createdat')
@@ -70,7 +79,7 @@ const AuthProvider = (props: Props) => {
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false); // Set loading to false when done
+      //setLoading(false); // Set loading to false when done
     }
   };
 
@@ -87,6 +96,15 @@ const AuthProvider = (props: Props) => {
       setLoading(false); // Set loading to false when done
     }
   };
+
+  const handleLogin = async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+    if (error) throw error;
+
+  }
 
   useEffect(() => {
     fetchSession();
@@ -106,16 +124,19 @@ const AuthProvider = (props: Props) => {
 
   const signOut = async () => {
     try {
+      setLoading(true);
       const { error } = await supabase.auth.signOut();
       if (error) {
         throw error;
       }
-      setLoading(true);
+
       setUser(null);
       setSession(null);
       setUsername(null);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -128,7 +149,8 @@ const AuthProvider = (props: Props) => {
     gender,
     nationality,
     school,
-    description
+    description,
+    favourite_subjects
   }: EditProfileProps): Promise<void> => {
     if (!session?.user) {
       Alert.alert('No user session available');
@@ -146,6 +168,7 @@ const AuthProvider = (props: Props) => {
         nationality: nationality,
         school: school,
         description: description,
+        favourite_subjects: favourite_subjects,
       };
       const { data, error } = await supabase.from('users').upsert(updates).select();
       if (error) {
@@ -167,6 +190,12 @@ const AuthProvider = (props: Props) => {
     }
   }, [userData]);
 
+  const handleWelcomePressed = () => {
+    setIsWelcomeCompleted(true);
+    console.log('welcome pressed', isWelcomeCompleted);
+
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -174,10 +203,13 @@ const AuthProvider = (props: Props) => {
         session,
         username,
         loading,
+        isWelcomeCompleted,
         userData,
         signOut,
         editProfile,
         refreshUserData,
+        handleLogin,
+        handleWelcomePressed,
       }}
     >
       {props.children}

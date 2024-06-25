@@ -1,15 +1,17 @@
-import { handleCountriesJson, handleGenderJson, handleSchoolJson, validateFirstName, validateLastName, validatePhoneNumber, validateUsername } from '@/src/screens/register/profileScreen/functions/function';
+import { handleCountriesJson, handleGenderJson, handleSchoolJson, handleSubjectJson, validateFirstName, validateLastName, validatePhoneNumber, validateUsername } from '@/src/screens/register/profileScreen/functions/function';
 import { COUNTRIES_URL } from '@env';
 import React, { useContext, useEffect, useState } from 'react'
-import { View, Text, Button, TouchableOpacity, TextInput, ScrollView, Platform, KeyboardAvoidingView, SafeAreaView, Alert } from 'react-native';
+import { View, Text, Button, StyleSheet,TouchableOpacity, TextInput, ScrollView, Platform, KeyboardAvoidingView, SafeAreaView, Alert } from 'react-native';
 import { Modal as DateModal } from 'react-native';
 import Modal from 'react-native-modal';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Dropdown } from 'react-native-element-dropdown';
+import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
 import { AuthContext } from '@/src/provider/authProvider';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const gender = require('../../../../constants/gender.json');
 const school = require('../../../../constants/schoolData.json');
+const allSubjects = require('../../../../constants/subjects.json');
 
 interface EditProfileProp {
     isModalVisible: boolean;
@@ -36,6 +38,8 @@ const EditProfileModal: React.FC<EditProfileProp> = ({ userData, isModalVisible,
     const [genderPicker, setGenderPicker] = useState<any[]>([]);
     const [nationalityPicker, setNationalityPicker] = useState<any[]>([]);
     const [schoolPicker, setSchoolPicker] = useState<any[]>([]);
+    const [subjectsValue, setSubjectsValue ] = useState<any[]>([]);
+    const [selectedSubjects, setSelectedSubjects] = useState<any[]>([]);
 
     const { editProfile, refreshUserData } = useContext(AuthContext);
 
@@ -84,6 +88,7 @@ const EditProfileModal: React.FC<EditProfileProp> = ({ userData, isModalVisible,
                     nationality: nationalityValue,
                     school: schoolValue,
                     description,
+                    favourite_subjects: selectedSubjects,
                 });
 
             } catch (error) {
@@ -115,6 +120,7 @@ const EditProfileModal: React.FC<EditProfileProp> = ({ userData, isModalVisible,
 
         setGenderPicker(handleGenderJson(gender));
         setSchoolPicker(handleSchoolJson(school));
+        setSubjectsValue(handleSubjectJson(allSubjects));
     }
 
     useEffect(() => {
@@ -180,6 +186,7 @@ const EditProfileModal: React.FC<EditProfileProp> = ({ userData, isModalVisible,
                                 onBlur={() => setScrollEnabled(true)}
                                 value={lastname}
                             />
+                            
                             <Text className={'text-md font-bold ml-3'}>Select your gender</Text>
                             <Dropdown
                                 style={{
@@ -201,6 +208,34 @@ const EditProfileModal: React.FC<EditProfileProp> = ({ userData, isModalVisible,
                                     setGenderValue(item.value);
                                 }}
                             />
+                            <View style={styles.container}>
+                <MultiSelect
+                    style={styles.dropdown}
+                    placeholderStyle={styles.placeholderStyle}
+                    selectedTextStyle={styles.selectedTextStyle}
+                    inputSearchStyle={styles.inputSearchStyle}
+                    iconStyle={styles.iconStyle}
+                    search
+                    data={subjectsValue}
+                    labelField="label"
+                    valueField="value"
+                    placeholder="Select favourite subjects"
+                    searchPlaceholder="Search..."
+                    value={selectedSubjects}
+                    onChange={item => {
+                        setSelectedSubjects(item);
+                    }}
+                    renderLeftIcon={() => (
+                        <Icon
+                            style={styles.icon}
+                            color="book-education-outline"
+                            name="book-education-outline"
+                            size={20}
+                        />
+                    )}
+                    selectedStyle={styles.selectedStyle}
+                />
+            </View>
                             {genderValue === "" && <Text className={'text-red-500 ml-2 mb-1'}>Select your gender</Text>}
 
                             <Text className={'text-md font-bold ml-3'}>Select your nationality</Text>
@@ -334,3 +369,32 @@ const EditProfileModal: React.FC<EditProfileProp> = ({ userData, isModalVisible,
 }
 
 export default EditProfileModal;
+const styles = StyleSheet.create({
+    container: { padding: 16 },
+    dropdown: {
+        height: 50,
+        backgroundColor: 'transparent',
+        borderBottomColor: '#909090',
+        borderBottomWidth: 0.5,
+    },
+    placeholderStyle: {
+        fontSize: 16,
+    },
+    selectedTextStyle: {
+        fontSize: 14,
+    },
+    iconStyle: {
+        width: 20,
+        height: 20,
+    },
+    inputSearchStyle: {
+        height: 40,
+        fontSize: 16,
+    },
+    icon: {
+        marginRight: 5,
+    },
+    selectedStyle: {
+        borderRadius: 12,
+    },
+});
