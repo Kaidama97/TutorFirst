@@ -16,7 +16,7 @@ const ClassesComponent = () => {
             .from('classattendee')
             .select('*', { count: 'exact', head: true })
             .eq('userid', session?.user?.id);
-    
+  
           if (count) { 
             setNumberOfClasses(count);
           }

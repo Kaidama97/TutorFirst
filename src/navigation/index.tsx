@@ -3,10 +3,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { AuthContext, AuthProvider } from '../provider/authProvider';
 
 import AuthNavigation from './AuthNavigation';
-
+import MainNavigation from './MainNavigation';
 import RegisterNavigation from './registerNavigation';
-import MainNavigation from './mainNavigation';
-import LoadingScreen from '../screens/register/loadingScreen';
+import BottomNavigation from './bottomNavigation';
 
 const AppNavigation = () => {
 
