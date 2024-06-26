@@ -100,7 +100,10 @@ const BookingScreen = ({ navigation }: { navigation: any }) => {
           return (
             <StyledTouchableOpacity
               key={cls.classid}
-              onPress={() => navigation.navigate('ClassDetails', { selectedClass: cls })}
+              onPress={() => {
+                const selectedTeacher = cls.classtutor[0]?.users; // Assuming `classtutor` contains the teacher info
+                navigation.navigate('ClassDetails', { selectedClass: cls, selectedTeacher });
+              }}
               className="p-4 mb-4 bg-white rounded-2xl shadow-md border border-gray-300"
               style={{
                 backgroundColor: '#ffffff',
@@ -151,20 +154,22 @@ const BookingScreen = ({ navigation }: { navigation: any }) => {
       </StyledScrollView>
 
        {/* Modal to display selected teacher's profile */}
-       <Modal visible={modalVisible} animationType="slide">
-        <StyledView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F0F0F0' }}>
-          {selectedTeacher && ( 
-            <StyledView style={{ alignItems: 'center', backgroundColor: '#ffffff', padding: 20, borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5 }}>
-              <ProfilePicture userid={selectedTeacher.userid} />
-              <StyledText className="text-lg font-bold mb-2"><Text>{selectedTeacher.firstname}</Text></StyledText>
-              <StyledText><Text>Bio: {selectedTeacher.description}</Text></StyledText>
-              <View style={{ marginTop: 10 }}>
-                <Button title="Close" onPress={closeModal} />
-              </View>
-            </StyledView>
-          )}
-        </StyledView>
-      </Modal>
+       <Modal visible={modalVisible} animationType="slide" transparent={true}>
+  <StyledView style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+    {selectedTeacher && (
+      <StyledView style={{ alignItems: 'center', backgroundColor: '#ffffff', padding: 20, borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, elevation: 5, width: '80%' }}>
+        <ProfilePicture userid={selectedTeacher.userid} />
+        <StyledText className="text-lg font-bold mb-2"><Text>{selectedTeacher.firstname}</Text></StyledText>
+        <StyledText style={{ textAlign: 'center', marginBottom: 10 }}>Description: {selectedTeacher.description}</StyledText>
+        <StyledText style={{ textAlign: 'center', marginBottom: 10 }}>Subjects Taught: {selectedTeacher.subjects_taught.join(', ')}</StyledText>
+        <View style={{ marginTop: 10 }}>
+          <Button title="Close" onPress={closeModal} />
+        </View>
+      </StyledView>
+    )}
+  </StyledView>
+</Modal>
+
     </StyledView>
   );
 };
