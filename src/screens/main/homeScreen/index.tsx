@@ -7,6 +7,7 @@ import Home from './components/home';
 import { Ionicons } from '@expo/vector-icons';
 import { AuthContext } from '@/src/provider/authProvider';
 import { fetchClasses } from '../classesScreen/components/fetchUserClasses';
+import ReminderList from './components/reminderList';
 
 
 const StyledView = styled(View);
@@ -49,25 +50,21 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   return (
     <ScrollView className='flex-1 '>
       <Home navigation={navigation} />
-      <Text
-        className="text-black text-xl font-bold text-left mb-2"
-      >
-        Reminder:
-      </Text>
 
-      <Text>Reminder</Text>
-      <View className="flex-row flex-wrap justify-between mx-2">
+      <ReminderList/>
+
+      <View className="flex-row flex-wrap justify-between mx-2 bg-white">
         <View className='flex-col w-[48%]'>
           <TouchableOpacity
             className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => handleCardPress('ExploreClasses')}
+            onPress={() => navigation.navigate('Book Classes')}
           >
             <Ionicons name="search" size={24} color="black" />
             <Text className="text-lg font-bold mt-2 text-center">Explore classes</Text>
           </TouchableOpacity>
           <TouchableOpacity
             className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => handleCardPress('MyClasses')}
+            onPress={() => navigation.navigate('My Classes')}
           >
             <Ionicons name="book" size={24} color="black" />
             <Text className="text-lg font-bold mt-2 text-center">My classes</Text>
@@ -76,14 +73,14 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         <View className='flex-col w-[48%]'>
           <TouchableOpacity
             className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => handleCardPress('Reminders')}
+            onPress={() => navigation.navigate('My Classes')}
           >
             <Ionicons name="notifications" size={24} color="black" />
             <Text className="text-lg font-bold mt-2 text-center">Reminders</Text>
           </TouchableOpacity>
           <TouchableOpacity
             className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => handleCardPress('MyProfile')}
+            onPress={() => navigation.navigate('Profile')}
           >
             <Ionicons name="person" size={24} color="black" />
             <Text className="text-lg font-bold mt-2 text-center">My profile</Text>

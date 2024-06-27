@@ -181,6 +181,8 @@ const AuthProvider = (props: Props) => {
       if (e instanceof Error) {
         Alert.alert(e.message);
       }
+    } finally {
+      setLoading(false);
     }
   };
 

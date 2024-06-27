@@ -47,6 +47,7 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
             emailRedirectTo: 'https://example.com/welcome',
           },
         });
+        console.log(error)
       
       if (!error && !data) {
         setLoading(false);
