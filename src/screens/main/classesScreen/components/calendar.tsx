@@ -1,16 +1,17 @@
-// src/screens/main/calendarScreen/index.tsx
 import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { AuthContext } from '@/src/provider/authProvider'; // Adjust the path as needed
-import { fetchClasses } from './fetchUserClasses'; // Adjust path as needed
+import { fetchClasses, getRecurringDates } from './fetchUserClasses'; // Adjust path as needed
 
 interface ClassDetails {
+  title: string;
   description: string;
   location: string;
   class_date: string;
   start_time: string;
   end_time: string;
+  isrecursing: boolean;
 }
 
 const CalendarScreen = () => {
@@ -31,12 +32,23 @@ const CalendarScreen = () => {
 
         const markedDatesObject: { [date: string]: any } = {};
         classesData.forEach(cls => {
-          const formattedDate = cls.class_date;
-          if (!markedDatesObject[formattedDate]) {
-            markedDatesObject[formattedDate] = { marked: true, dots: [], classes: [] };
+          if (cls.isrecursing) {
+            const recurringDates = getRecurringDates(cls.class_date);
+            recurringDates.forEach(date => {
+              if (!markedDatesObject[date]) {
+                markedDatesObject[date] = { marked: true, dots: [], classes: [] };
+              }
+              markedDatesObject[date].dots.push({ color: 'red' });
+              markedDatesObject[date].classes.push(cls);
+            });
+          } else {
+            const formattedDate = cls.class_date;
+            if (!markedDatesObject[formattedDate]) {
+              markedDatesObject[formattedDate] = { marked: true, dots: [], classes: [] };
+            }
+            markedDatesObject[formattedDate].dots.push({ color: 'red' });
+            markedDatesObject[formattedDate].classes.push(cls);
           }
-          markedDatesObject[formattedDate].dots.push({ color: 'red' });
-          markedDatesObject[formattedDate].classes.push(cls);
         });
         setMarkedDates(markedDatesObject);
       } catch (error) {
@@ -74,7 +86,7 @@ const CalendarScreen = () => {
         ) : (
           selectedClasses.map((cls, index) => (
             <View key={index} style={{ marginBottom: 16, padding: 16, borderWidth: 1, borderColor: '#dddddd', borderRadius: 8, backgroundColor: '#f9f9f9' }}>
-              <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>{cls.description}</Text>
+              <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>{cls.title}</Text>
               <Text style={{ fontSize: 14, color: '#666', marginBottom: 4 }}>Location: {cls.location}</Text>
               <Text style={{ fontSize: 14, color: '#666', marginBottom: 4 }}>Date: {cls.class_date}</Text>
               <Text style={{ fontSize: 14, color: '#666', marginBottom: 4 }}>Time: {cls.start_time} - {cls.end_time}</Text>

@@ -2,7 +2,7 @@ import { AuthContext } from '@/src/provider/authProvider';
 import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Modal, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { addClassAttendee } from './insertClasses';
+import { addClassAttendee, fetchUserBookedClasses } from './insertClasses';
 import ProfilePicture from './profilePicture';
 
 const ClassDetailsScreen = ({ route, navigation }: any) => {
@@ -39,21 +39,67 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
     }
   };
 
-  const handleBookClass = () => {
-    Alert.alert(
-      "Confirm Booking",
-      `Are you sure you want to book the class "${selectedClass.title}"?`,
-      [
-        {
-          text: "No",
-          style: "cancel"
-        },
-        {
-          text: "Yes",
-          onPress: () => bookClass(selectedClass)
+  const handleBookClass = async () => {
+    try {
+      const userId = session?.user.id;
+      if (!userId) {
+        console.error('User ID not found');
+        return;
+      }
+
+      const bookedClasses = await fetchUserBookedClasses(userId);
+      const isConflict = checkForConflicts(bookedClasses, selectedClass);
+
+      if (isConflict) {
+        Alert.alert(
+          "Time Conflict",
+          "You have another class booked at the same time. Please choose a different time slot.",
+          [{ text: "OK", style: "cancel" }]
+        );
+        navigation.navigate('Booking', { selectedClass });
+      } else {
+        Alert.alert(
+          "Confirm Booking",
+          `Are you sure you want to book the class "${selectedClass.title}"?`,
+          [
+            {
+              text: "No",
+              style: "cancel"
+            },
+            {
+              text: "Yes",
+              onPress: () => bookClass(selectedClass)
+            }
+          ]
+        );
+      }
+    } catch (error: any) {
+      console.error('Error checking conflicts:', error.message);
+    }
+  };
+
+  const checkForConflicts = (bookedClasses: any[], newClass: any) => {
+    const newClassDate = new Date(newClass.class_date);
+    const newClassStartTime = new Date(newClass.class_date + 'T' + newClass.start_time);
+    const newClassEndTime = new Date(newClass.class_date + 'T' + newClass.end_time);
+
+    for (const cls of bookedClasses) {
+      const bookedClassDate = new Date(cls.class_date);
+      const bookedClassStartTime = new Date(cls.class_date + 'T' + cls.start_time);
+      const bookedClassEndTime = new Date(cls.class_date + 'T' + cls.end_time);
+
+      if (newClassDate.getTime() === bookedClassDate.getTime()) {
+        if (
+          (newClassStartTime >= bookedClassStartTime && newClassStartTime < bookedClassEndTime) ||
+          (newClassEndTime > bookedClassStartTime && newClassEndTime <= bookedClassEndTime) ||
+          (newClassStartTime <= bookedClassStartTime && newClassEndTime >= bookedClassEndTime)
+        ) {
+          return true;
         }
-      ]
-    );
+      }
+    }
+
+    return false;
   };
 
   const bookClass = async (cls: any) => {

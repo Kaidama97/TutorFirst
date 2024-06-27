@@ -1,8 +1,22 @@
 import { supabase } from '../../../../initSupabase';
 
 // Function to fetch data from Supabase
-const fetchClasses = async () => {
+const fetchClasses = async (userId: string) => {
   try {
+    // Fetch classes that the user is attending
+    const { data: attendedClasses, error: attendError } = await supabase
+      .from('classattendee')
+      .select('classid')
+      .eq('userid', userId);
+
+    if (attendError) {
+      throw attendError;
+    }
+
+    // Extract class IDs that the user is attending
+    const attendedClassIds = attendedClasses.map((entry: any) => entry.classid);
+
+    // Fetch classes that the user is not attending
     const { data, error } = await supabase
       .from('classes')
       .select(`
@@ -20,7 +34,8 @@ const fetchClasses = async () => {
         classattendee (
           classid
         )
-      `);
+      `)
+      .not('classid', 'in', `(${attendedClassIds.join(',')})`);
 
     if (error) {
       throw error;
