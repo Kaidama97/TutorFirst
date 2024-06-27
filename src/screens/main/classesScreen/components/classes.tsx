@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, ActivityIndicator, Button, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ActivityIndicator, TouchableOpacity, Alert, Button } from 'react-native';
 import { fetchClasses, deleteClass } from './fetchUserClasses'; // Adjust path as needed
 import { AuthContext } from '@/src/provider/authProvider'; // Import the AuthContext
 import { NavigationProp, ParamListBase, useFocusEffect } from '@react-navigation/native';
@@ -41,37 +41,7 @@ const ClassesList: React.FC<ClassesListProps> = ({ navigation }) => {
     }, [session]) // Depend on user object from AuthContext
   );
 
-  const handleCancelClass = async (classId: string) => {
-    try {
-      const userId = session?.user?.id;
-      if (!userId) {
-        throw new Error('User ID not found');
-      }
-
-      await deleteClass(userId, classId); // Implement deleteClass function in fetchUserClasses
-      setClasses(classes.filter(cls => cls.classid !== classId));
-    } catch (error) {
-      console.error('Error cancelling class:', error);
-    }
-  };
-
-  const confirmCancelClass = (classId: string) => {
-    Alert.alert(
-      "Cancel Class",
-      "Are you sure you want to cancel this class?",
-      [
-        {
-          text: "No",
-          style: "cancel"
-        },
-        {
-          text: "Yes",
-          onPress: () => handleCancelClass(classId)
-        }
-      ]
-    );
-  };
-
+  
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff' }}>
@@ -93,16 +63,16 @@ const ClassesList: React.FC<ClassesListProps> = ({ navigation }) => {
           <TouchableOpacity
             key={cls.classid}
             style={{ marginBottom: 16, padding: 16, borderWidth: 1, borderColor: '#dddddd', borderRadius: 8, backgroundColor: '#f9f9f9' }}
-            onPress={() => console.log(`Class ${cls.classid} clicked`)}
+            onPress={() => navigation.navigate('ClassScreenDetails', { selectedClass: cls })}
           >
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <View>
-                <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>{cls.description}</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>{cls.title}</Text>
                 <Text style={{ fontSize: 14, color: '#666666', marginBottom: 4 }}>Location: {cls.location}</Text>
                 <Text style={{ fontSize: 14, color: '#666666', marginBottom: 4 }}>Date: {cls.class_date}</Text>
                 <Text style={{ fontSize: 14, color: '#666666', marginBottom: 4 }}>Time: {cls.start_time} - {cls.end_time}</Text>
               </View>
-              <Button title="Cancel Class" onPress={() => confirmCancelClass(cls.classid)} color="#ff0000" />
+              
             </View>
           </TouchableOpacity>
         ))

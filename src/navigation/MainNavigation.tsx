@@ -14,6 +14,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Classes from '../screens/main/classesScreen/index'; // Update this path as necessary
 import Calendar from '../screens/main/classesScreen/components/calendar'; // Create this component if not done yet
 import ClassDetailsScreen from '../screens/main/bookingScreen/components/classDetails';
+import ClassDetailsScreenClasses from '../screens/main/classesScreen/components/classDetails';
 
 const ClassesStack = createStackNavigator();
 
@@ -29,6 +30,11 @@ function ClassesStackNavigator() {
         name="Calendar"
         component={Calendar}
         options={{ title: 'Calendar' }} // Adjust options as necessary
+      />
+      <ClassesStack.Screen 
+        name="ClassScreenDetails" 
+        component={ClassDetailsScreenClasses} 
+        options={{ title: 'Class Details' }}
       />
     </ClassesStack.Navigator>
   );

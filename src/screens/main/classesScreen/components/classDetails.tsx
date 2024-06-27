@@ -2,12 +2,14 @@ import { AuthContext } from '@/src/provider/authProvider';
 import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Modal, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { addClassAttendee } from './insertClasses';
 import ProfilePicture from './profilePicture';
+import { deleteClass } from './fetchUserClasses';
 
 const ClassDetailsScreen = ({ route, navigation }: any) => {
-  const { selectedClass, selectedTeacher } = route.params;
+  const { selectedClass} = route.params;
   const { session } = useContext(AuthContext);
+  const [classes, setClasses] = useState<any[]>([]); // Define type for classes state
+  const [loading, setLoading] = useState(true); // State to manage loading indicator
   const [modalVisible, setModalVisible] = useState(false);
 
   const formatDate = (dateString: string) => {
@@ -29,20 +31,26 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
     return `${durationHours}h ${durationMinutes}m`;
   };
 
-  const getSlotStyle = (availableSlots: number) => {
-    if (availableSlots > 10) {
-      return { color: 'green' };
-    } else if (availableSlots > 0) {
-      return { color: 'orange' };
-    } else {
-      return { color: 'red' };
+
+  const handleCancelClass = async (classId: string) => {
+    try {
+      const userId = session?.user?.id;
+      if (!userId) {
+        throw new Error('User ID not found');
+      }
+
+      await deleteClass(userId, classId); // Implement deleteClass function in fetchUserClasses
+      setClasses(classes.filter(cls => cls.classid !== classId));
+      navigation.navigate('Classes', { selectedClass });
+    } catch (error) {
+      console.error('Error cancelling class:', error);
     }
   };
 
-  const handleBookClass = () => {
+  const confirmCancelClass = (classId: string) => {
     Alert.alert(
-      "Confirm Booking",
-      `Are you sure you want to book the class "${selectedClass.title}"?`,
+      "Cancel Class",
+      "Are you sure you want to cancel this class?",
       [
         {
           text: "No",
@@ -50,25 +58,12 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
         },
         {
           text: "Yes",
-          onPress: () => bookClass(selectedClass)
+          onPress: () => handleCancelClass(classId)
         }
       ]
     );
   };
 
-  const bookClass = async (cls: any) => {
-    if (!session?.user.id) {
-      console.error('User ID not found');
-      return;
-    }
-    try {
-      await addClassAttendee(session?.user.id, cls.classid);
-      console.log('Successfully booked class:', cls.classid);
-      navigation.navigate('Booking', { selectedClass });
-    } catch (error: any) {
-      console.error('Error booking class:', error.message);
-    }
-  };
 
   const closeModal = () => {
     setModalVisible(false);
@@ -107,38 +102,17 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
             </Text>
           </View>
         </View>
-        <Text style={[{ marginTop: 5, fontWeight: 'bold' }, getSlotStyle(selectedClass.class_size - selectedClass.classattendee.length)]}>
-          Slots Available: {selectedClass.class_size - selectedClass.classattendee.length}
-        </Text>
-        <Text style={{ marginTop: 10, fontWeight: 'bold' }}>Teacher: {selectedTeacher.firstname} {selectedTeacher.lastname}</Text>
-
-        {/* Book Button */}
-        <TouchableOpacity style={styles.bookButton} onPress={handleBookClass}>
-          <Text style={styles.buttonText}>Book</Text>
+    
+        {/* Cancel Button */}
+        <TouchableOpacity style={styles.cancelButton} onPress={() => confirmCancelClass(selectedClass.classid)}>
+          <Text style={{ color: '#ffffff', fontWeight: 'bold' }}>Cancel Class</Text>
         </TouchableOpacity>
 
-        {/* Teacher Details Button */}
-        <TouchableOpacity style={styles.teacherButton} onPress={() => setModalVisible(true)}>
-          <Text style={styles.buttonText}>View Teacher Details</Text>
-        </TouchableOpacity>
+  
       </View>
 
       {/* Modal */}
-      <Modal visible={modalVisible} animationType="slide" transparent={true}>
-        <View style={styles.modalContainer}>
-          {selectedTeacher && (
-            <View style={styles.modalContent}>
-              <ProfilePicture userid={selectedTeacher.userid} />
-              <Text style={styles.modalTitle}>{selectedTeacher.firstname} {selectedTeacher.lastname}</Text>
-              <Text style={styles.modalText}>Description: {selectedTeacher.description}</Text>
-              <Text style={styles.modalText}>Subjects Taught: {selectedTeacher.subjects_taught.join(', ')}</Text>
-              <View style={{ marginTop: 10 }}>
-                <Button title="Close" onPress={closeModal} />
-              </View>
-            </View>
-          )}
-        </View>
-      </Modal>
+      
     </ScrollView>
   );
 };
@@ -169,55 +143,21 @@ const styles = StyleSheet.create({
     color: '#666666',
     marginTop: 10,
   },
-  bookButton: {
-    backgroundColor: 'tomato',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    marginTop: 20,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
   teacherButton: {
     backgroundColor: 'blue',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 20,
     marginTop: 10,
     alignItems: 'center',
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
+  cancelButton: {
+    backgroundColor: 'tomato',
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 20,
+    marginTop: 20,
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    padding: 20,
-    borderRadius: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    width: '80%',
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  modalText: {
-    textAlign: 'center',
-    marginBottom: 10,
-    fontSize: 16,
-    color: '#666666',
   },
 });
 

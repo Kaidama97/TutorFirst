@@ -12,7 +12,9 @@ const fetchClasses = async () => {
             firstname,
             description,
             profilepicture,
-            userid
+            userid,
+            lastname,
+            subjects_taught
           )
         ),
         classattendee (
