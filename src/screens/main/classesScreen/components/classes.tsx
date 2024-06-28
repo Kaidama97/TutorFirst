@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, ActivityIndicator, TouchableOpacity, Alert, Button } from 'react-native';
+import { View, Text, ActivityIndicator,ScrollView, TouchableOpacity, Alert, Button } from 'react-native';
 import { fetchClasses, deleteClass } from './fetchUserClasses'; // Adjust path as needed
 import { AuthContext } from '@/src/provider/authProvider'; // Import the AuthContext
 import { NavigationProp, ParamListBase, useFocusEffect } from '@react-navigation/native';
+import { styled } from 'nativewind';
+
+const StyledScrollView = styled(ScrollView);
 
 interface ClassesListProps {
   navigation: NavigationProp<ParamListBase>;
@@ -51,7 +54,7 @@ const ClassesList: React.FC<ClassesListProps> = ({ navigation }) => {
   }
 
   return (
-    <View style={{ flex: 1, padding: 16, backgroundColor: '#ffffff' }}>
+    <StyledScrollView style={{ flex: 1, padding: 16, backgroundColor: '#ffffff' }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Your Classes</Text>
         <Button title="View Calendar" onPress={() => navigation.navigate('Calendar')} />
@@ -77,7 +80,7 @@ const ClassesList: React.FC<ClassesListProps> = ({ navigation }) => {
           </TouchableOpacity>
         ))
       )}
-    </View>
+    </StyledScrollView>
   );
 };
 
