@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
 import { styled } from 'nativewind';
 import { theme } from '../../../assets/theme/theme';
@@ -6,9 +6,9 @@ import { theme } from '../../../assets/theme/theme';
 import Home from './components/home';
 import { Ionicons } from '@expo/vector-icons';
 import { AuthContext } from '@/src/provider/authProvider';
-import { fetchClasses } from '../classesScreen/components/fetchUserClasses';
+import { fetchClassesWithTutors } from '../classesScreen/components/fetchUserClasses';
 import ReminderList from './components/reminderList';
-
+import { useFocusEffect } from '@react-navigation/native';
 
 const StyledView = styled(View);
 
@@ -16,8 +16,9 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [classes, setClasses] = useState<any[]>([]); // Define type for classes state
   const [loading, setLoading] = useState(true); // State to manage loading indicator
   const { session } = useContext(AuthContext);
+  
   const handleCardPress = (screen: string) => {
-    // navigation.navigate(screen);
+    navigation.navigate(screen);
   };
 
   const fetchUserClasses = async () => {
@@ -33,7 +34,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         throw new Error('User ID not found');
       }
 
-      const classesData = await fetchClasses(userId);
+      const classesData = await fetchClassesWithTutors(userId);
       setClasses(classesData);
       setLoading(false); // Set loading state to false after data is fetched
     } catch (error) {
@@ -42,10 +43,12 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-   fetchUserClasses;
-   console.log(classes)
-},[]);
+  // Use useFocusEffect to refetch data when the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserClasses();
+    }, [])
+  );
 
   return (
     <ScrollView className='flex-1 '>
@@ -87,7 +90,6 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-
     </ScrollView>
   );
 };
