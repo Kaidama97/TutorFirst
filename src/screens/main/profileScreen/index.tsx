@@ -34,7 +34,7 @@ const ProfileScreen = () => {
 
   const formatDate = (dateString: string | number | Date) => {
     const date = new Date(dateString);
-    const options = { year: 'numeric', month: 'short' };
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short' };
     return date.toLocaleDateString('en-US', options);
   };
   return (
@@ -49,7 +49,7 @@ const ProfileScreen = () => {
         <Text className='text-sm text-gray-600'>Member since: {userProfile?.createdat ? formatDate(userProfile.createdat) : 'N/A'}</Text>
       </View>
 
-      <ClassesComponent />
+      <ClassesComponent userData={userData}/>
       <UserInfo userProfile={userProfile} />
       <View className='flex-1 mb-4 p-4'>
         <Button

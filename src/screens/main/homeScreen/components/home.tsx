@@ -3,13 +3,12 @@ import { View, Text, ScrollView, Button, Dimensions, ImageBackground } from 'rea
 import { theme } from '../../../../assets/theme/theme';
 import moment from 'moment-timezone';
 import { AuthContext } from '@/src/provider/authProvider';
-import { quotes } from '@/src/constants/constants';
+import { studentsQuotes, teachersQuotes } from '@/src/constants/constants';
 import { Ionicons } from '@expo/vector-icons';
 //import Carousel from 'react-native-reanimated-carousel';
 
 
-const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-  const { username } = useContext(AuthContext);
+const HomeScreen: React.FC<{ userData: any }> = ({ userData }) => {
   const currentDateTime = moment();
   const timeZone = moment.tz.guess();
   const formattedDateTime = currentDateTime.format('DD/MM/YYYY HH:mm:ss');
@@ -25,6 +24,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     }
   }
   const getRandomQuote = () => {
+    const quotes = userData?.roleid == "1" ? teachersQuotes : studentsQuotes;
     const randomIndex = Math.floor(Math.random() * quotes.length);
     return quotes[randomIndex];
   };
@@ -50,7 +50,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           adjustsFontSizeToFit
           numberOfLines={1}
         >
-          {greeting}, {username}!
+          {greeting}, {userData.username}!
         </Text>
         <Text
           className="text-black text-left mt-2 font-semibold"

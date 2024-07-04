@@ -15,7 +15,7 @@ interface ClassItem {
     lesson_type: string;
 }
 
-const ReminderList: React.FC = () => {
+const ReminderList: React.FC<{ userData: any }> = ({userData }) => {
     const [classes, setClasses] = useState<ClassItem[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const { session } = useContext(AuthContext);
@@ -26,10 +26,15 @@ const ReminderList: React.FC = () => {
 
         setLoading(true);
 
-        const { data, error } = await supabase
-            .from('classattendee')
-            .select('classid')
-            .eq('userid', session?.user.id);
+        const { data, error } = userData.roleid =="1"
+        ? await supabase
+        .from('classtutor')
+        .select('classid')
+        .eq('userid', session?.user.id)
+        : await supabase
+        .from('classattendee')
+        .select('classid')
+        .eq('userid', session?.user.id)
 
         if (error) {
             console.error(error);
@@ -81,9 +86,7 @@ const ReminderList: React.FC = () => {
 
     return (
         <View className="flex-1 bg-white p-2">
-            <Text
-                className="text-black text-xl font-bold text-left mb-2"
-            >
+            <Text className="text-black text-xl font-bold text-left mb-2">
                 Reminder:
             </Text>
             {loading ? (
@@ -91,7 +94,13 @@ const ReminderList: React.FC = () => {
                     <ActivityIndicator size="large" color="#0000ff" />
                 </View>
             ) : (
-                classes.map(renderClassItem)
+                classes.length > 0 ? (
+                    classes.map(renderClassItem)
+                ) : (
+                    <View className="flex-1 justify-center items-center">
+                        <Text className="text-lg text-gray-600">No current reminder</Text>
+                    </View>
+                )
             )}
         </View>
     );

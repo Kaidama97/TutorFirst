@@ -4,19 +4,19 @@ import { styled } from 'nativewind';
 import { theme } from '../../../assets/theme/theme';
 //import MainNavBar from '../../../navigation/mainNavBar'; // Import the MainNavBar component
 import Home from './components/home';
-import { Ionicons } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AuthContext } from '@/src/provider/authProvider';
 import { fetchClassesWithTutors } from '../classesScreen/components/fetchUserClasses';
 import ReminderList from './components/reminderList';
 import { useFocusEffect } from '@react-navigation/native';
-
-const StyledView = styled(View);
+import ButtonsNavigation from './components/homeScreenCards';
+import HomeScreenCards from './components/homeScreenCards';
 
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [classes, setClasses] = useState<any[]>([]); // Define type for classes state
   const [loading, setLoading] = useState(true); // State to manage loading indicator
-  const { session } = useContext(AuthContext);
-  
+  const { session, userData } = useContext(AuthContext);
+
   const handleCardPress = (screen: string) => {
     navigation.navigate(screen);
   };
@@ -52,44 +52,11 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
   return (
     <ScrollView className='flex-1 '>
-      <Home navigation={navigation} />
+      <Home userData={userData} />
 
-      <ReminderList/>
+      <ReminderList userData={userData}/>
+      <HomeScreenCards navigation={navigation} userData={userData}/>
 
-      <View className="flex-row flex-wrap justify-between mx-2 bg-white">
-        <View className='flex-col w-[48%]'>
-          <TouchableOpacity
-            className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => navigation.navigate('Book Classes')}
-          >
-            <Ionicons name="search" size={24} color="black" />
-            <Text className="text-lg font-bold mt-2 text-center">Explore classes</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => navigation.navigate('My Classes')}
-          >
-            <Ionicons name="book" size={24} color="black" />
-            <Text className="text-lg font-bold mt-2 text-center">My classes</Text>
-          </TouchableOpacity>
-        </View>
-        <View className='flex-col w-[48%]'>
-          <TouchableOpacity
-            className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => navigation.navigate('My Classes')}
-          >
-            <Ionicons name="notifications" size={24} color="black" />
-            <Text className="text-lg font-bold mt-2 text-center">Reminders</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => navigation.navigate('Profile')}
-          >
-            <Ionicons name="person" size={24} color="black" />
-            <Text className="text-lg font-bold mt-2 text-center">My profile</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
     </ScrollView>
   );
 };

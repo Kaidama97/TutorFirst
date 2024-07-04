@@ -149,7 +149,7 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
     }
     return (
         <ScrollView >
-            {/* <KeyboardAvoidingView className="form space-y-2 bg-slate-500" > */}
+ 
             <Text className={'text-md font-bold mb-1 ml-3'}>Enter Username</Text>
             <TextInput
                 placeholder="Username"
@@ -291,7 +291,7 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
                 {valuePicker1 === "" && <Text className={'text-red-500 ml-2 mb-1'}>Select your gender</Text>}
             </View>
             <View>
-                <Text className={'text-md font-bold mb-2 ml-3'}>Select your nationality</Text>
+                <Text className='text-md font-bold mb-2 ml-3'>Select your nationality</Text>
                 <Dropdown
                     style={{
                         margin: 16,
