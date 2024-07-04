@@ -51,6 +51,7 @@ const getRecurringDates = (startDate: string, weeks: number = 4) => {
   return dates;
 };
 
+//redo this function to delete the class from the teacher's data
 const deleteClass = async (userId: string, classId: string) => {
   try {
     const { error } = await supabase
