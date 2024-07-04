@@ -18,6 +18,11 @@ import ClassDetailsScreen from '../screens/main/bookingScreen/components/classDe
 import ClassDetailsScreenClasses from '../screens/main/classesScreen/components/classDetails';
 import { AuthContext } from '../provider/authProvider';
 
+
+import TeacherClasses from '../screens/main/teacherClassesScreen/index'; // Update this path as necessary
+import TeacherCalendar from '../screens/main/teacherClassesScreen/components/calendar'; // Create this component if not done yet
+import TeacherClassDetailsScreenClasses from '../screens/main/teacherClassesScreen/components/classDetails';
+
 const ClassesStack = createStackNavigator();
 
 function ClassesStackNavigator() {
@@ -40,6 +45,31 @@ function ClassesStackNavigator() {
         options={{ title: 'Class Details' }}
       />
     </ClassesStack.Navigator>
+  );
+}
+
+const TeacherClassesStack = createStackNavigator();
+
+function TeacherClassesStackNavigator() {
+
+  return (
+    <TeacherClassesStack.Navigator>
+      <TeacherClassesStack.Screen
+        name="Classes"
+        component={TeacherClasses}
+        options={{ headerShown: false }} // Adjust options as necessary
+      />
+      <TeacherClassesStack.Screen
+        name="Calendar"
+        component={TeacherCalendar}
+        options={{ title: 'Calendar' }} // Adjust options as necessary
+      />
+      <TeacherClassesStack.Screen
+        name="ClassScreenDetails"
+        component={TeacherClassDetailsScreenClasses}
+        options={{ title: 'Class Details' }}
+      />
+    </TeacherClassesStack.Navigator>
   );
 }
 
@@ -106,7 +136,10 @@ function MyTabs() {
       })}
     >
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="My Classes" component={ClassesStackNavigator} />
+      {userData?.roleid == "1"
+        ? <Tab.Screen name="My Classes" component={TeacherClassesStackNavigator} />
+        : <Tab.Screen name="My Classes" component={ClassesStackNavigator} />}
+
       {userData?.roleid == "1"
         ? <Tab.Screen name="Create Class" component={CreateClass} />
         : <Tab.Screen name="Book Classes" component={BookingStackNavigator} />}
