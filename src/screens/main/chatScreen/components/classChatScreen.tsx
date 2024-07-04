@@ -1,8 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, TextInput, ScrollView, Button } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Button } from 'react-native';
 import { styled } from 'nativewind';
-import { AuthContext } from '@/src/provider/authProvider';
-import { supabase } from '../../../../initSupabase';
+
+// Mock data for messages (replace with actual data fetching)
+const mockMessages = [
+  { id: 1, userId: 1, content: 'Hello!', timestamp: '2024-07-05T10:30:00Z' },
+  { id: 2, userId: 2, content: 'Hi there!', timestamp: '2024-07-05T10:31:00Z' },
+  { id: 3, userId: 1, content: 'How are you?', timestamp: '2024-07-05T10:32:00Z' },
+  { id: 4, userId: 2, content: 'I\'m good, thanks!', timestamp: '2024-07-05T10:33:00Z' },
+];
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -11,67 +17,22 @@ const StyledScrollView = styled(ScrollView);
 
 const ClassChatScreen = ({ route }: { route: any }) => {
   const { classId } = route.params;
-  const { session } = useContext(AuthContext);
-  const [messages, setMessages] = useState<any[]>([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [messages, setMessages] = useState<any[]>(mockMessages); // State to hold messages
+  const [newMessage, setNewMessage] = useState(''); // State for new message input
 
-  useEffect(() => {
-    // Function to fetch initial messages
-    const fetchMessages = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('messages')
-          .select('*')
-          .eq('class_id', classId)
-          .order('created_at', { ascending: true });
+  // Function to mock sending a new message
+  const sendMessage = () => {
+    if (newMessage.trim() === '') return; // Prevent sending empty messages
 
-        if (error) {
-          throw error;
-        }
-
-        setMessages(data || []);
-      } catch (error: unknown) {
-        console.error('Error fetching messages:', (error as Error).message);
-      }
+    const newMsg = {
+      id: messages.length + 1,
+      userId: 1, // Replace with actual user ID from context or state
+      content: newMessage,
+      timestamp: new Date().toISOString(),
     };
 
-    // Fetch initial messages
-    fetchMessages();
-
-    // Subscribe to real-time events
-    const subscription = supabase
-  .from(`messages:class_id=eq.${classId}`)
-  .on('INSERT', (payload: { new: any; }) => {
-    console.log('New message received:', payload.new);
-    // Handle the new message update in your state or UI
-    setMessages(prevMessages => [...prevMessages, payload.new]);
-  })
-  .subscribe();
-
-
-    // Clean up subscription on unmount
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [classId, session]); // Ensure to include classId and session in dependencies if needed
-
-  // Function to handle new message sending
-  const sendMessage = async () => {
-    if (!newMessage.trim()) return;
-
-    try {
-      const { error } = await supabase
-        .from('messages')
-        .insert([{ class_id: classId, content: newMessage, user_id: session?.user?.id }]);
-
-      if (error) {
-        throw error;
-      }
-
-      setNewMessage('');
-    } catch (error: unknown) {
-      console.error('Error sending message:', (error as Error).message);
-    }
+    setMessages([...messages, newMsg]);
+    setNewMessage('');
   };
 
   return (
@@ -81,8 +42,8 @@ const ClassChatScreen = ({ route }: { route: any }) => {
           <StyledView
             key={msg.id}
             style={{
-              alignSelf: msg.user_id === session?.user?.id ? 'flex-end' : 'flex-start',
-              backgroundColor: msg.user_id === session?.user?.id ? '#DCF8C6' : '#E5E5EA',
+              alignSelf: msg.userId === 1 ? 'flex-end' : 'flex-start',
+              backgroundColor: msg.userId === 1 ? '#DCF8C6' : '#E5E5EA',
               borderRadius: 8,
               padding: 10,
               margin: 5,
@@ -91,7 +52,7 @@ const ClassChatScreen = ({ route }: { route: any }) => {
           >
             <StyledText>{msg.content}</StyledText>
             <StyledText style={{ fontSize: 12, alignSelf: 'flex-end', marginTop: 5 }}>
-              {new Date(msg.created_at).toLocaleString()}
+              {new Date(msg.timestamp).toLocaleString()}
             </StyledText>
           </StyledView>
         ))}
