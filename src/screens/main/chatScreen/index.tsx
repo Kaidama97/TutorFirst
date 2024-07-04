@@ -1,12 +1,20 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
+import { styled } from 'nativewind';
+import { AuthProvider } from '@/src/provider/authProvider';
+import ChatComponent from './components/chat'; // Adjust path as needed
 
-const ChatScreen = () => {
+
+const StyledView = styled(View);
+
+const ChatScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   return (
-    <View>
-      <Text>Chat Screen</Text>
-    </View>
+    <AuthProvider>
+      <StyledView className="flex-1">
+        <ChatComponent navigation={navigation} />
+      </StyledView>
+    </AuthProvider>
   );
-};
+}
 
 export default ChatScreen;

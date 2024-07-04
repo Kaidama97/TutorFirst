@@ -15,6 +15,8 @@ import Classes from '../screens/main/classesScreen/index'; // Update this path a
 import Calendar from '../screens/main/classesScreen/components/calendar'; // Create this component if not done yet
 import ClassDetailsScreen from '../screens/main/bookingScreen/components/classDetails';
 import ClassDetailsScreenClasses from '../screens/main/classesScreen/components/classDetails';
+import ChatScreen from '../screens/main/chatScreen/components/chat';
+import classChatScreen from '../screens/main/chatScreen/components/classChatScreen';
 
 const ClassesStack = createStackNavigator();
 
@@ -59,6 +61,26 @@ function BookingStackNavigator() {
   );
 }
 
+const ChatStack = createStackNavigator();
+
+function ChatStackNavigator() {
+  return (
+    <ChatStack.Navigator>
+      <ChatStack.Screen 
+        name="Chat" 
+        component={ChatScreen} 
+        options={{ headerShown: false }} // Adjust options as necessary
+      />
+      <ChatStack.Screen 
+        name="ClassChat" 
+        component={classChatScreen} 
+        options={{ title: 'Class Chat' }}
+      />
+    </ChatStack.Navigator>
+  );
+}
+
+
 const Tab = createBottomTabNavigator();
 
 function MyTabs() {
@@ -102,7 +124,7 @@ function MyTabs() {
       <Tab.Screen name="My Classes" component={ClassesStackNavigator} />
       <Tab.Screen name="Book Classes" component={BookingStackNavigator} />
       <Tab.Screen name="Resources" component={Resources} />
-      <Tab.Screen name="Chat" component={Chat} />
+      <Tab.Screen name="Chat" component={ChatStackNavigator} />
       <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
