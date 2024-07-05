@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Button } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { styled } from 'nativewind';
+import { useFocusEffect } from '@react-navigation/native';
 import { AuthContext } from '@/src/provider/authProvider';
-import { fetchClasses } from './fetchClasses';
+import { fetchClasses, fetchTutorClasses } from './fetchClasses';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -15,25 +16,34 @@ const ChatScreen = ({ navigation }: { navigation: any }) => {
   const fetchData = useCallback(async () => {
     try {
       const userId = session?.user?.id;
+      const userRole = session?.user?.role;
+
       if (!userId) {
         console.error('User ID not found');
         return;
       }
 
-      // Fetch user's classes
-      const classesData = await fetchClasses(userId);
+      let classesData;
+
+      if (userRole === '1') {
+        classesData = await fetchClasses(userId);
+      } else {
+        classesData = await fetchTutorClasses(userId);
+      }
+
       setUserClasses(classesData);
-    } catch (error:any) {
+    } catch (error: any) {
       console.error('Error fetching classes:', error.message);
     }
   }, [session]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [fetchData])
+  );
 
   const handleClassSelect = (classId: number) => {
-    // Navigate to ClassChatScreen with classId as a parameter
     navigation.navigate('ClassChat', { classId });
   };
 
