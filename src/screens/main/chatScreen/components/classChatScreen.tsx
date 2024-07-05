@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Button } from 'react-native';
+import { View, Text, TextInput, ScrollView, Button } from 'react-native';
 import { styled } from 'nativewind';
 import { supabase } from '@/src/initSupabase'; // Adjust the path to your Supabase client
 import { AuthContext } from '@/src/provider/authProvider';
@@ -11,9 +11,9 @@ const StyledScrollView = styled(ScrollView);
 
 const ClassChatScreen = ({ route }: { route: any }) => {
   const { classId } = route.params;
-  const { session } = useContext(AuthContext);
+  const { session, userData } = useContext(AuthContext);
   const [messages, setMessages] = useState<any[]>([]);
-  const [newMessage, setNewMessage] = useState(''); // State for new message input
+  const [newMessage, setNewMessage] = useState('');
 
   useEffect(() => {
     if (!session?.user?.id) return;
@@ -21,10 +21,10 @@ const ClassChatScreen = ({ route }: { route: any }) => {
     // Fetch initial messages
     const fetchMessages = async () => {
       const { data, error } = await supabase
-        .from('messages')
-        .select('*')
-        .eq('class_id', classId)
-        .order('created_at', { ascending: true });
+      .from('messages')
+      .select('*, users!inner(firstname, lastname, roleid)')
+      .eq('class_id', classId)
+      .order('created_at', { ascending: true });
 
       if (error) {
         console.error('Error fetching messages:', error);
@@ -39,7 +39,8 @@ const ClassChatScreen = ({ route }: { route: any }) => {
     const channel = supabase
       .channel(`public:messages:class_id=eq.${classId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
-        setMessages((prevMessages) => [...prevMessages, payload.new]);
+        const newMessageWithUser = { ...payload.new, users: { firstname: userData?.firstname || 'Unknown', lastname: userData?.lastname || '', role: userData?.roleid } };
+        setMessages((prevMessages) => [...prevMessages, newMessageWithUser]);
       })
       .subscribe();
 
@@ -74,6 +75,16 @@ const ClassChatScreen = ({ route }: { route: any }) => {
     }
   };
 
+// Function to render the user's name with role
+const renderUserName = (user: any) => {
+  if (!userData) {
+    return 'Unknown';
+  }
+
+  let fullName = `${user.firstname} ${user.lastname}`;
+  let role = userData.roleid == "1" ? 'Teacher' : userData.roleid == "2" ? 'Student' : 'Unknown Role';
+  return `${fullName} (${role})`;
+};
   return (
     <StyledView style={{ flex: 1 }}>
       <StyledScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}>
@@ -89,6 +100,7 @@ const ClassChatScreen = ({ route }: { route: any }) => {
               maxWidth: '80%',
             }}
           >
+            <StyledText style={{ fontWeight: 'bold' }}>{renderUserName(msg.users)}</StyledText>
             <StyledText>{msg.content}</StyledText>
             <StyledText style={{ fontSize: 12, alignSelf: 'flex-end', marginTop: 5 }}>
               {new Date(msg.created_at).toLocaleString()}
