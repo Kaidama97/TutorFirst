@@ -89,7 +89,7 @@ const ClassChatScreen = ({ route }: { route: any }) => {
     }
 
     let fullName = `${user.firstname} ${user.lastname}`;
-    let role = user.roleid === "1" ? 'Teacher' : user.roleid === "2" ? 'Student' : 'Unknown Role';
+    let role = user.roleid == "1" ? 'Teacher' : user.roleid == "2" ? 'Student' : 'Unknown Role';
     return `${fullName} (${role})`;
   };
 
