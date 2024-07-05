@@ -1,14 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Button } from 'react-native';
 import { styled } from 'nativewind';
-
-// Mock data for messages (replace with actual data fetching)
-const mockMessages = [
-  { id: 1, userId: 1, content: 'Hello!', timestamp: '2024-07-05T10:30:00Z' },
-  { id: 2, userId: 2, content: 'Hi there!', timestamp: '2024-07-05T10:31:00Z' },
-  { id: 3, userId: 1, content: 'How are you?', timestamp: '2024-07-05T10:32:00Z' },
-  { id: 4, userId: 2, content: 'I\'m good, thanks!', timestamp: '2024-07-05T10:33:00Z' },
-];
+import { supabase } from '@/src/initSupabase'; // Adjust the path to your Supabase client
+import { AuthContext } from '@/src/provider/authProvider';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -17,22 +11,67 @@ const StyledScrollView = styled(ScrollView);
 
 const ClassChatScreen = ({ route }: { route: any }) => {
   const { classId } = route.params;
-  const [messages, setMessages] = useState<any[]>(mockMessages); // State to hold messages
+  const { session } = useContext(AuthContext);
+  const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState(''); // State for new message input
 
-  // Function to mock sending a new message
-  const sendMessage = () => {
-    if (newMessage.trim() === '') return; // Prevent sending empty messages
+  useEffect(() => {
+    if (!session?.user?.id) return;
 
-    const newMsg = {
-      id: messages.length + 1,
-      userId: 1, // Replace with actual user ID from context or state
-      content: newMessage,
-      timestamp: new Date().toISOString(),
+    // Fetch initial messages
+    const fetchMessages = async () => {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('class_id', classId)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching messages:', error);
+      } else {
+        setMessages(data);
+      }
     };
 
-    setMessages([...messages, newMsg]);
-    setNewMessage('');
+    fetchMessages();
+
+    // Set up real-time subscription
+    const channel = supabase
+      .channel(`public:messages:class_id=eq.${classId}`)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
+        setMessages((prevMessages) => [...prevMessages, payload.new]);
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [classId, session?.user?.id]);
+
+  // Function to send a new message
+  const sendMessage = async () => {
+    if (newMessage.trim() === '') return; // Prevent sending empty messages
+
+    if (!session?.user?.id) {
+      console.error('User not authenticated');
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('messages')
+      .insert([
+        {
+          class_id: classId,
+          user_id: session.user.id,
+          content: newMessage,
+        },
+      ]);
+
+    if (error) {
+      console.error('Error sending message:', error);
+    } else {
+      setNewMessage('');
+    }
   };
 
   return (
@@ -42,8 +81,8 @@ const ClassChatScreen = ({ route }: { route: any }) => {
           <StyledView
             key={msg.id}
             style={{
-              alignSelf: msg.userId === 1 ? 'flex-end' : 'flex-start',
-              backgroundColor: msg.userId === 1 ? '#DCF8C6' : '#E5E5EA',
+              alignSelf: msg.user_id === session?.user?.id ? 'flex-end' : 'flex-start',
+              backgroundColor: msg.user_id === session?.user?.id ? '#DCF8C6' : '#E5E5EA',
               borderRadius: 8,
               padding: 10,
               margin: 5,
@@ -52,7 +91,7 @@ const ClassChatScreen = ({ route }: { route: any }) => {
           >
             <StyledText>{msg.content}</StyledText>
             <StyledText style={{ fontSize: 12, alignSelf: 'flex-end', marginTop: 5 }}>
-              {new Date(msg.timestamp).toLocaleString()}
+              {new Date(msg.created_at).toLocaleString()}
             </StyledText>
           </StyledView>
         ))}
