@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { View, Text, TextInput, ScrollView, Button } from 'react-native';
 import { styled } from 'nativewind';
 import { supabase } from '@/src/initSupabase'; // Adjust the path to your Supabase client
@@ -14,6 +14,7 @@ const ClassChatScreen = ({ route }: { route: any }) => {
   const { session, userData } = useContext(AuthContext);
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     if (!session?.user?.id) return;
@@ -41,6 +42,7 @@ const ClassChatScreen = ({ route }: { route: any }) => {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
         const newMessageWithUser = { ...payload.new, users: { firstname: userData?.firstname || 'Unknown', lastname: userData?.lastname || '', role: userData?.roleid } };
         setMessages((prevMessages) => [...prevMessages, newMessageWithUser]);
+        scrollToEnd();
       })
       .subscribe();
 
@@ -75,19 +77,30 @@ const ClassChatScreen = ({ route }: { route: any }) => {
     }
   };
 
-// Function to render the user's name with role
-const renderUserName = (user: any) => {
-  if (!userData) {
-    return 'Unknown';
-  }
+  const scrollToEnd = () => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollToEnd({ animated: true });
+    }
+  };
 
-  let fullName = `${user.firstname} ${user.lastname}`;
-  let role = userData.roleid == "1" ? 'Teacher' : userData.roleid == "2" ? 'Student' : 'Unknown Role';
-  return `${fullName} (${role})`;
-};
+  const renderUserName = (user: any) => {
+    if (!userData) {
+      return 'Unknown';
+    }
+
+    let fullName = `${user.firstname} ${user.lastname}`;
+    let role = user.roleid === "1" ? 'Teacher' : user.roleid === "2" ? 'Student' : 'Unknown Role';
+    return `${fullName} (${role})`;
+  };
+
+  useEffect(() => {
+    // Scroll to the bottom when component first loads
+    scrollToEnd();
+  }, []);
+
   return (
     <StyledView style={{ flex: 1 }}>
-      <StyledScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}>
+      <StyledScrollView ref={scrollViewRef} contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}>
         {messages.map((msg) => (
           <StyledView
             key={msg.id}
