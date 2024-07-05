@@ -107,3 +107,8 @@ export const createClass = async ({
         throw error;
     } 
 }
+
+export const validateTime = (classes: any[], day: string ,time: Date) => {
+    const filteredClasses = classes.filter(cls => cls.class_day.includes(day));
+    console.log(filteredClasses)
+}

@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, ActivityIndicator, ScrollView, TouchableOpacity, Button } from 'react-native';
-import { fetchClassesWithTutors, deleteClass } from './fetchUserClasses'; // Adjust path as needed
+import { fetchClasses, deleteClass } from './fetchUserClasses'; // Adjust path as needed
 import { AuthContext } from '@/src/provider/authProvider'; // Import the AuthContext
 import { NavigationProp, ParamListBase, useFocusEffect } from '@react-navigation/native';
 import { styled } from 'nativewind';
-
+import Icon from 'react-native-vector-icons/FontAwesome';
 const StyledScrollView = styled(ScrollView);
 
 interface ClassesListProps {
@@ -12,27 +12,10 @@ interface ClassesListProps {
 }
 
 const ClassesList: React.FC<ClassesListProps> = ({ navigation }) => {
+
   const [classes, setClasses] = useState<any[]>([]); // Define type for classes state
   const [loading, setLoading] = useState(true); // State to manage loading indicator
-  const { session } = useContext(AuthContext); // Access user session from AuthContext
-
-  const fetchUserClasses = async () => {
-    if (!session || !session.user || !session.user.id) {
-      console.error('User ID not found or session not initialized');
-      setLoading(false); // Set loading state to false on error
-      return;
-    }
-
-    try {
-      const userId = session.user.id;
-      const classesData = await fetchClassesWithTutors(userId);
-      setClasses(classesData);
-      setLoading(false); // Set loading state to false after data is fetched
-    } catch (error) {
-      console.error('Error fetching user classes:', error);
-      setLoading(false); // Ensure loading state is set to false on error
-    }
-  };
+  const { session, userData } = useContext(AuthContext); // Access user session from AuthContext
 
   useFocusEffect(
     React.useCallback(() => {
@@ -41,21 +24,55 @@ const ClassesList: React.FC<ClassesListProps> = ({ navigation }) => {
       }
     }, [session]) // Depend on user object from AuthContext
   );
+  const fetchUserClasses = async () => {
+    setLoading(true); // Set loading state to false after data is fetched
+    if (!session || !session.user || !session.user.id) {
+      console.error('User ID not found or session not initialized');
+      setLoading(false); // Set loading state to false on error
+
+      return;
+    }
+
+    try {
+      const userId = session.user.id;
+      const classesData = await fetchClasses(userId, userData);
+
+      setClasses(classesData);
+    } catch (error) {
+      console.error('Error fetching user classes:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#ffffff' }}>
+      <View className="flex-1 justify-center items-center bg-white">
         <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
   }
 
   return (
-    <StyledScrollView style={{ flex: 1, padding: 16, backgroundColor: '#ffffff' }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Your Classes</Text>
+    <ScrollView className="flex-1 p-4 bg-white">
+      <View className="flex-row justify-between items-center mb-4">
+        <Text className="text-2xl font-bold">Your Classes</Text>
         <Button title="View Calendar" onPress={() => navigation.navigate('Calendar')} />
       </View>
+      {userData?.roleid == "1" && (
+        <View className="flex justify-center items-center w-full mb-4">
+          <TouchableOpacity 
+          className="flex items-center p-4 border border-gray-300 rounded-md w-full"
+          onPress={() => navigation.navigate("Create Class")}>
+            <View className="flex items-center justify-center">
+              <Icon name="plus" size={24} color="tomato" />
+              <Text className="mt-2 text-gray-700">Click to create class</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
       {classes.length === 0 ? (
         <Text>No classes found.</Text>
       ) : (
@@ -64,23 +81,25 @@ const ClassesList: React.FC<ClassesListProps> = ({ navigation }) => {
           return (
             <TouchableOpacity
               key={cls.classid}
-              style={{ marginBottom: 16, padding: 16, borderWidth: 1, borderColor: '#dddddd', borderRadius: 8, backgroundColor: '#f9f9f9' }}
+              className="mb-4 p-4 border border-gray-300 rounded-md bg-gray-100"
               onPress={() => navigation.navigate('ClassScreenDetails', { selectedClass: cls, selectedTeacher: tutor })}
             >
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <View className="flex-row justify-between items-center">
                 <View>
-                  <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>{cls.title}</Text>
-                  <Text style={{ fontSize: 14, color: '#666666', marginBottom: 4 }}>Location: {cls.location}</Text>
-                  <Text style={{ fontSize: 14, color: '#666666', marginBottom: 4 }}>Date: {cls.class_date}</Text>
-                  <Text style={{ fontSize: 14, color: '#666666', marginBottom: 4 }}>Time: {cls.start_time} - {cls.end_time}</Text>
-                  <Text style={{ fontSize: 14, color: '#666666', marginBottom: 4 }}>Teacher: {tutor.firstname} {tutor.lastname}</Text>
+                  <Text className="text-lg font-bold mb-2">{cls.title}</Text>
+                  <Text className="text-base text-gray-600 mb-1">Location: {cls.location}</Text>
+                  <Text className="text-base text-gray-600 mb-1">Date: {cls.class_date}</Text>
+                  <Text className="text-base text-gray-600 mb-1">Time: {cls.start_time} - {cls.end_time}</Text>
+                  {userData?.roleid != "1" && (
+                    <Text className="text-base text-gray-600 mb-1">Teacher: {tutor.firstname} {tutor.lastname}</Text>
+                  )}
                 </View>
               </View>
             </TouchableOpacity>
           );
         })
       )}
-    </StyledScrollView>
+    </ScrollView>
   );
 };
 

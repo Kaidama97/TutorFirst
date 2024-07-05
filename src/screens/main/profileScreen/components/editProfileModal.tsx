@@ -1,7 +1,7 @@
 import { handleCountriesJson, handleGenderJson, handleSchoolJson, handleSubjectJson, validateFirstName, validateLastName, validatePhoneNumber, validateUsername } from '@/src/screens/register/profileScreen/functions/function';
 import { COUNTRIES_URL } from '@env';
 import React, { useContext, useEffect, useState } from 'react'
-import { View, Text, Button, StyleSheet,TouchableOpacity, TextInput, ScrollView, Platform, KeyboardAvoidingView, SafeAreaView, Alert } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity, TextInput, ScrollView, Platform, KeyboardAvoidingView, SafeAreaView, Alert } from 'react-native';
 import { Modal as DateModal } from 'react-native';
 import Modal from 'react-native-modal';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -38,7 +38,7 @@ const EditProfileModal: React.FC<EditProfileProp> = ({ userData, isModalVisible,
     const [genderPicker, setGenderPicker] = useState<any[]>([]);
     const [nationalityPicker, setNationalityPicker] = useState<any[]>([]);
     const [schoolPicker, setSchoolPicker] = useState<any[]>([]);
-    const [subjectsValue, setSubjectsValue ] = useState<any[]>([]);
+    const [subjectsValue, setSubjectsValue] = useState<any[]>([]);
     const [selectedSubjects, setSelectedSubjects] = useState<any[]>([]);
 
     const { editProfile, refreshUserData } = useContext(AuthContext);
@@ -139,232 +139,233 @@ const EditProfileModal: React.FC<EditProfileProp> = ({ userData, isModalVisible,
 
 
     return (
-        <View>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            className='flex-1'
+        >
             <Modal
                 isVisible={isModalVisible}
                 onBackdropPress={toggleModal}
             >
+
                 <SafeAreaView className='flex-1'>
-                    <KeyboardAvoidingView
-                        behavior={Platform.OS === "ios" ? "padding" : "height"}
-                        className='flex-1'
-                    >
-                        <ScrollView className='w-full bg-white p-5 rounded-lg'>
-                            <Text className='text-black text-lg font-bold mb-4'>Edit Profile</Text>
-                            <Text className={'text-md font-bold mb-1 ml-3'}>Enter Username</Text>
-                            <TextInput
-                                placeholder={username}
-                                autoCapitalize="none"
-                                className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3 w-full"
-                                onChangeText={(text) => setUsername(text)}
-                                onFocus={() => setScrollEnabled(false)}
-                                onBlur={() => {
-                                    setScrollEnabled(true)
 
-                                }}
-                                value={username}
-                            />
+                    <ScrollView className='w-full bg-white p-5 rounded-lg'>
+                        <Text className='text-black text-lg font-bold mb-4'>Edit Profile</Text>
+                        <Text className={'text-md font-bold mb-1 ml-3'}>Enter Username</Text>
+                        <TextInput
+                            placeholder={username}
+                            autoCapitalize="none"
+                            className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3 w-full"
+                            onChangeText={(text) => setUsername(text)}
+                            onFocus={() => setScrollEnabled(false)}
+                            onBlur={() => {
+                                setScrollEnabled(true)
 
-                            <Text className={'text-md font-bold mb-2 ml-3'}>Enter first name</Text>
-                            <TextInput
-                                placeholder={firstname}
-                                autoCapitalize="none"
-                                className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3 w-full"
-                                onChangeText={(text) => setFirstname(text)}
-                                onFocus={() => setScrollEnabled(false)}
-                                onBlur={() => setScrollEnabled(true)}
-                                value={firstname}
-                            />
-
-                            <Text className={'text-md font-bold mb-2 ml-3'}>Enter last name</Text>
-                            <TextInput
-                                placeholder={lastname}
-                                autoCapitalize="none"
-                                className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3 w-full"
-                                onChangeText={(text) => setLastname(text)}
-                                onFocus={() => setScrollEnabled(false)}
-                                onBlur={() => setScrollEnabled(true)}
-                                value={lastname}
-                            />
-                            
-                            <Text className={'text-md font-bold ml-3'}>Select your gender</Text>
-                            <Dropdown
-                                style={{
-                                    margin: 16,
-                                    height: 50,
-                                    borderBottomColor: 'grey',
-                                    borderBottomWidth: 0.5,
-                                }}
-                                placeholderStyle={{ fontSize: 16, }}
-                                data={genderPicker}
-
-                                maxHeight={300}
-                                labelField="label"
-                                valueField="value"
-                                placeholder={genderValue}
-                                searchPlaceholder="Search..."
-                                value={genderValue}
-                                onChange={item => {
-                                    setGenderValue(item.value);
-                                }}
-                            />
-                            <View style={styles.container}>
-                <MultiSelect
-                    style={styles.dropdown}
-                    placeholderStyle={styles.placeholderStyle}
-                    selectedTextStyle={styles.selectedTextStyle}
-                    inputSearchStyle={styles.inputSearchStyle}
-                    iconStyle={styles.iconStyle}
-                    search
-                    data={subjectsValue}
-                    labelField="label"
-                    valueField="value"
-                    placeholder="Select favourite subjects"
-                    searchPlaceholder="Search..."
-                    value={selectedSubjects}
-                    onChange={item => {
-                        setSelectedSubjects(item);
-                    }}
-                    renderLeftIcon={() => (
-                        <Icon
-                            style={styles.icon}
-                            color="book-education-outline"
-                            name="book-education-outline"
-                            size={20}
+                            }}
+                            value={username}
                         />
-                    )}
-                    selectedStyle={styles.selectedStyle}
-                />
-            </View>
-                            {genderValue === "" && <Text className={'text-red-500 ml-2 mb-1'}>Select your gender</Text>}
 
-                            <Text className={'text-md font-bold ml-3'}>Select your nationality</Text>
-                            <Dropdown
-                                style={{
-                                    margin: 16,
-                                    height: 50,
-                                    borderBottomColor: 'gray',
-                                    borderBottomWidth: 0.5,
-                                }}
-                                placeholderStyle={{ fontSize: 16, }}
-                                data={nationalityPicker}
+                        <Text className={'text-md font-bold mb-2 ml-3'}>Enter first name</Text>
+                        <TextInput
+                            placeholder={firstname}
+                            autoCapitalize="none"
+                            className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3 w-full"
+                            onChangeText={(text) => setFirstname(text)}
+                            onFocus={() => setScrollEnabled(false)}
+                            onBlur={() => setScrollEnabled(true)}
+                            value={firstname}
+                        />
+
+                        <Text className={'text-md font-bold mb-2 ml-3'}>Enter last name</Text>
+                        <TextInput
+                            placeholder={lastname}
+                            autoCapitalize="none"
+                            className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3 w-full"
+                            onChangeText={(text) => setLastname(text)}
+                            onFocus={() => setScrollEnabled(false)}
+                            onBlur={() => setScrollEnabled(true)}
+                            value={lastname}
+                        />
+
+                        <Text className={'text-md font-bold ml-3'}>Select your gender</Text>
+                        <Dropdown
+                            style={{
+                                margin: 16,
+                                height: 50,
+                                borderBottomColor: 'grey',
+                                borderBottomWidth: 0.5,
+                            }}
+                            placeholderStyle={{ fontSize: 16, }}
+                            data={genderPicker}
+
+                            maxHeight={300}
+                            labelField="label"
+                            valueField="value"
+                            placeholder={genderValue}
+                            searchPlaceholder="Search..."
+                            value={genderValue}
+                            onChange={item => {
+                                setGenderValue(item.value);
+                            }}
+                        />
+                        <View style={styles.container}>
+                            <MultiSelect
+                                style={styles.dropdown}
+                                placeholderStyle={styles.placeholderStyle}
+                                selectedTextStyle={styles.selectedTextStyle}
+                                inputSearchStyle={styles.inputSearchStyle}
+                                iconStyle={styles.iconStyle}
                                 search
-                                searchField="label"
-                                maxHeight={300}
+                                data={subjectsValue}
                                 labelField="label"
                                 valueField="value"
-                                placeholder={nationalityValue}
+                                placeholder="Select favourite subjects"
                                 searchPlaceholder="Search..."
-                                value={nationalityPicker}
-                                onChange={country => {
-                                    setNationalityValue(country.value);
+                                value={selectedSubjects}
+                                onChange={item => {
+                                    setSelectedSubjects(item);
                                 }}
+                                renderLeftIcon={() => (
+                                    <Icon
+                                        style={styles.icon}
+                                        color="book-education-outline"
+                                        name="book-education-outline"
+                                        size={20}
+                                    />
+                                )}
+                                selectedStyle={styles.selectedStyle}
                             />
-                            {nationalityValue === "" && <Text className={'text-red-500 ml-2 mb-1'}>Select your nationality</Text>}
+                        </View>
+                        {genderValue === "" && <Text className={'text-red-500 ml-2 mb-1'}>Select your gender</Text>}
 
-                            <Text className={'text-md font-bold ml-3'}>Select your school</Text>
-                            <Dropdown
-                                style={{
-                                    margin: 16,
-                                    height: 50,
-                                    borderBottomColor: 'gray',
-                                    borderBottomWidth: 0.5,
+                        <Text className={'text-md font-bold ml-3'}>Select your nationality</Text>
+                        <Dropdown
+                            style={{
+                                margin: 16,
+                                height: 50,
+                                borderBottomColor: 'gray',
+                                borderBottomWidth: 0.5,
+                            }}
+                            placeholderStyle={{ fontSize: 16, }}
+                            data={nationalityPicker}
+                            search
+                            searchField="label"
+                            maxHeight={300}
+                            labelField="label"
+                            valueField="value"
+                            placeholder={nationalityValue}
+                            searchPlaceholder="Search..."
+                            value={nationalityPicker}
+                            onChange={country => {
+                                setNationalityValue(country.value);
+                            }}
+                        />
+                        {nationalityValue === "" && <Text className={'text-red-500 ml-2 mb-1'}>Select your nationality</Text>}
 
-                                }}
-                                placeholderStyle={{ fontSize: 16, }}
-                                data={schoolPicker}
-                                search
-                                searchField="label"
-                                maxHeight={300}
-                                labelField="label"
-                                valueField="value"
-                                placeholder={schoolValue || "Select your school"}
-                                searchPlaceholder="Search..."
-                                value={schoolPicker}
-                                onChange={school => {
-                                    setSchoolValue(school.value);
-                                }}
-                            />
+                        <Text className={'text-md font-bold ml-3'}>Select your school</Text>
+                        <Dropdown
+                            style={{
+                                margin: 16,
+                                height: 50,
+                                borderBottomColor: 'gray',
+                                borderBottomWidth: 0.5,
 
-                            <Text className={'text-md font-bold mb-2 ml-3'}>Enter phone number</Text>
-                            <TextInput
-                                placeholder={phoneNumber}
-                                autoCapitalize="none"
-                                className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3 w-full"
-                                keyboardType='numeric'
-                                onChangeText={(text) => setPhoneNumber(text)}
-                                onFocus={() => setScrollEnabled(false)}
-                                onBlur={() => setScrollEnabled(true)}
-                                value={phoneNumber}
-                            />
-                            <Text className={'text-md font-bold mb-2 ml-3'}>Select D.O.B</Text>
-                            <TouchableOpacity onPress={showDatePicker} className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3 w-full">
-                                <Text>{birthDate ? birthDate.toLocaleDateString('en-GB') : "Select Birthdate"}</Text>
-                            </TouchableOpacity>
-                            {isDatePickerVisible && Platform.OS === 'ios' && (
-                                <DateModal
-                                    transparent={true}
-                                    animationType="slide"
-                                    visible={isDatePickerVisible}
-                                    onRequestClose={hideDatePicker}
-                                >
-                                    <View className="flex-1 justify-center items-center">
-                                        <View className="bg-white rounded-2xl p-5 w-80">
-                                            <DateTimePicker
-                                                value={birthDate ? birthDate : new Date()}
-                                                textColor='black'
-                                                mode="date"
-                                                display="spinner"
-                                                onChange={handleConfirm}
-                                                maximumDate={new Date()}
-                                                style={{ width: '100%' }}
-                                            />
-                                            <Button onPress={hideDatePicker} title="Done" />
-                                        </View>
+                            }}
+                            placeholderStyle={{ fontSize: 16, }}
+                            data={schoolPicker}
+                            search
+                            searchField="label"
+                            maxHeight={300}
+                            labelField="label"
+                            valueField="value"
+                            placeholder={schoolValue || "Select your school"}
+                            searchPlaceholder="Search..."
+                            value={schoolPicker}
+                            onChange={school => {
+                                setSchoolValue(school.value);
+                            }}
+                        />
+
+                        <Text className={'text-md font-bold mb-2 ml-3'}>Enter phone number</Text>
+                        <TextInput
+                            placeholder={phoneNumber}
+                            autoCapitalize="none"
+                            className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3 w-full"
+                            keyboardType='numeric'
+                            onChangeText={(text) => setPhoneNumber(text)}
+                            onFocus={() => setScrollEnabled(false)}
+                            onBlur={() => setScrollEnabled(true)}
+                            value={phoneNumber}
+                        />
+                        <Text className={'text-md font-bold mb-2 ml-3'}>Select D.O.B</Text>
+                        <TouchableOpacity onPress={showDatePicker} className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3 w-full">
+                            <Text>{birthDate ? birthDate.toLocaleDateString('en-GB') : "Select Birthdate"}</Text>
+                        </TouchableOpacity>
+                        {isDatePickerVisible && Platform.OS === 'ios' && (
+                            <DateModal
+                                transparent={true}
+                                animationType="slide"
+                                visible={isDatePickerVisible}
+                                onRequestClose={hideDatePicker}
+                            >
+                                <View className="flex-1 justify-center items-center">
+                                    <View className="bg-white rounded-2xl p-5 w-80">
+                                        <DateTimePicker
+                                            value={birthDate ? birthDate : new Date()}
+                                            textColor='black'
+                                            mode="date"
+                                            display="spinner"
+                                            onChange={handleConfirm}
+                                            maximumDate={new Date()}
+                                            style={{ width: '100%' }}
+                                        />
+                                        <Button onPress={hideDatePicker} title="Done" />
                                     </View>
-                                </DateModal>
-                            )}
-                            {isDatePickerVisible && Platform.OS !== 'ios' && (
-                                <DateTimePicker
-                                    value={birthDate ? birthDate : new Date()}
-                                    mode="date"
-                                    display="spinner"
-                                    onChange={handleConfirm}
-                                    maximumDate={new Date()}
-                                />
-                            )}
-
-                            <Text className={'text-md font-bold mb-2 ml-2'}>Tell us more about yourself</Text>
-                            <TextInput
-                                multiline
-                                numberOfLines={5} // Set the number of lines you want to display initially
-                                placeholder={description}
-                                value={description}
-                                className='p-2 bg-gray-100 text-gray-700 rounded-xl mb-2'
-                                onChangeText={(text) => {
-                                    setDescription(text);
-                                }}
-                                style={{ height: 100, textAlignVertical: 'top' }}
-                                onFocus={() => setScrollEnabled(false)}
-                                onBlur={() => setScrollEnabled(true)}
-                            />
-
-
-                            {schoolValue === "" && <Text className={'text-red-500 ml-2 mb-1'}>Select your school</Text>}
-                            <View className='items-end mb-10 flex-row justify-end'>
-                                <View className='mr-2'>
-                                    <Button title="Update" onPress={handleSubmit} />
                                 </View>
+                            </DateModal>
+                        )}
+                        {isDatePickerVisible && Platform.OS !== 'ios' && (
+                            <DateTimePicker
+                                value={birthDate ? birthDate : new Date()}
+                                mode="date"
+                                display="spinner"
+                                onChange={handleConfirm}
+                                maximumDate={new Date()}
+                            />
+                        )}
 
-                                <Button title="Close" onPress={toggleModal} />
+                        <Text className={'text-md font-bold mb-2 ml-2'}>Tell us more about yourself</Text>
+                        <TextInput
+                            multiline
+                            numberOfLines={5} // Set the number of lines you want to display initially
+                            placeholder={description}
+                            value={description}
+                            className='p-2 bg-gray-100 text-gray-700 rounded-xl mb-2'
+                            onChangeText={(text) => {
+                                setDescription(text);
+                            }}
+                            style={{ height: 100, textAlignVertical: 'top' }}
+                            onFocus={() => setScrollEnabled(false)}
+                            onBlur={() => setScrollEnabled(true)}
+                        />
+
+
+                        {schoolValue === "" && <Text className={'text-red-500 ml-2 mb-1'}>Select your school</Text>}
+                        <View className='items-end mb-10 flex-row justify-end'>
+                            <View className='mr-2'>
+                                <Button title="Update" onPress={handleSubmit} />
                             </View>
-                        </ScrollView>
 
-                    </KeyboardAvoidingView>
+                            <Button title="Close" onPress={toggleModal} />
+                        </View>
+                    </ScrollView>
+
+
                 </SafeAreaView>
 
             </Modal>
-        </View>
+        </KeyboardAvoidingView>
     );
 }
 

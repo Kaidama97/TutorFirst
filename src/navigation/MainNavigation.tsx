@@ -9,7 +9,7 @@ import Profile from '../screens/main/profileScreen/index'; // Update this path a
 import Bookings from '../screens/main/bookingScreen/index'; // Update this path as necessary
 import Resources from '../screens/main/resourcesScreen/index'; // Update this path as necessary
 import Chat from '../screens/main/chatScreen/index'; // Import the Chat screen component
-import CreateClass from '../screens/main/createClassScreen/index'; // Import the create class screen component
+
 
 import { createStackNavigator } from '@react-navigation/stack';
 import Classes from '../screens/main/classesScreen/index'; // Update this path as necessary
@@ -19,9 +19,7 @@ import ClassDetailsScreenClasses from '../screens/main/classesScreen/components/
 import { AuthContext } from '../provider/authProvider';
 
 
-import TeacherClasses from '../screens/main/teacherClassesScreen/index'; // Update this path as necessary
-import TeacherCalendar from '../screens/main/teacherClassesScreen/components/calendar'; // Create this component if not done yet
-import TeacherClassDetailsScreenClasses from '../screens/main/teacherClassesScreen/components/classDetails';
+import CreateClassScreen from '../screens/main/classesScreen/components/classForm';
 
 const ClassesStack = createStackNavigator();
 
@@ -44,34 +42,18 @@ function ClassesStackNavigator() {
         component={ClassDetailsScreenClasses}
         options={{ title: 'Class Details' }}
       />
+      <ClassesStack.Screen
+        name="Create Class"
+        component={CreateClassScreen}
+        options={{ title: 'Create Class' }}
+      />
     </ClassesStack.Navigator>
   );
 }
 
-const TeacherClassesStack = createStackNavigator();
 
-function TeacherClassesStackNavigator() {
 
-  return (
-    <TeacherClassesStack.Navigator>
-      <TeacherClassesStack.Screen
-        name="Classes"
-        component={TeacherClasses}
-        options={{ headerShown: false }} // Adjust options as necessary
-      />
-      <TeacherClassesStack.Screen
-        name="Calendar"
-        component={TeacherCalendar}
-        options={{ title: 'Calendar' }} // Adjust options as necessary
-      />
-      <TeacherClassesStack.Screen
-        name="ClassScreenDetails"
-        component={TeacherClassDetailsScreenClasses}
-        options={{ title: 'Class Details' }}
-      />
-    </TeacherClassesStack.Navigator>
-  );
-}
+
 
 const BookingStack = createStackNavigator();
 
@@ -112,9 +94,7 @@ function MyTabs() {
             case 'Book Classes':
               iconName = focused ? 'calendar' : 'calendar-outline';
               break;
-            case 'Create Class':
-              iconName = focused ? 'add-circle' : 'add-circle-outline';
-              break;
+
             case 'Resources':
               iconName = focused ? 'book' : 'book-outline';
               break;
@@ -136,13 +116,12 @@ function MyTabs() {
       })}
     >
       <Tab.Screen name="Home" component={Home} />
-      {userData?.roleid == "1"
-        ? <Tab.Screen name="My Classes" component={TeacherClassesStackNavigator} />
-        : <Tab.Screen name="My Classes" component={ClassesStackNavigator} />}
 
-      {userData?.roleid == "1"
-        ? <Tab.Screen name="Create Class" component={CreateClass} />
-        : <Tab.Screen name="Book Classes" component={BookingStackNavigator} />}
+      <Tab.Screen name="My Classes" component={ClassesStackNavigator} />
+
+      {userData?.roleid != "1" && (
+        <Tab.Screen name="Book Classes" component={BookingStackNavigator} />
+      )}
       <Tab.Screen name="Resources" component={Resources} />
       <Tab.Screen name="Chat" component={Chat} />
       <Tab.Screen name="Profile" component={Profile} />

@@ -26,7 +26,7 @@ const ReminderList: React.FC<{ userData: any }> = ({userData }) => {
 
         setLoading(true);
 
-        const { data, error } = userData.roleid =="1"
+        const { data, error } = userData?.roleid =="1"
         ? await supabase
         .from('classtutor')
         .select('classid')

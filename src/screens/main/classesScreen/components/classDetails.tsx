@@ -4,11 +4,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { AuthContext } from '@/src/provider/authProvider';
 import { deleteClass } from './fetchUserClasses';
 import ProfilePicture from './profilePicture';
-import { styled } from 'nativewind';
 
 const ClassDetailsScreen = ({ route, navigation }: any) => {
   const { selectedClass, selectedTeacher } = route.params; // Ensure selectedClass and selectedTeacher are correctly passed
-  const { session } = useContext(AuthContext);
+  const { session, userData } = useContext(AuthContext);
   const [modalVisible, setModalVisible] = useState(false);
 
   // Function to handle canceling a class
@@ -43,7 +42,10 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
       ]
     );
   };
-
+  const navigateToEditClass = (classId: string) => {
+    // Navigate to edit class screen, passing necessary parameters if needed
+    navigation.navigate('EditClass', { classId });
+  };
   // Function to close the modal
   const closeModal = () => {
     setModalVisible(false);
@@ -120,12 +122,17 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
 
         {/* Teacher Details */}
 
-        <TouchableOpacity style={styles.teacherButton} onPress={() => setModalVisible(true)}>
-          
+        {userData?.roleid == "1"
+          ? <TouchableOpacity style={styles.editButton} onPress={() => navigateToEditClass(selectedClass.classid)}>
+            <Text style={{ color: '#ffffff', fontWeight: 'bold' }}>Edit Class</Text>
+          </TouchableOpacity>
+
+          : <TouchableOpacity style={styles.teacherButton} onPress={() => setModalVisible(true)}>
+
             <Text style={{ color: '#ffffff', fontWeight: 'bold' }}>
               Teacher: {selectedTeacher.firstname} {selectedTeacher.lastname}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
 
 
         {/* Cancel Button */}
@@ -137,7 +144,7 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
       {/* Modal for displaying teacher details */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
-          {selectedTeacher && (
+          { selectedTeacher && userData?.roleid != "1" &&(
             <View style={styles.modalContent}>
               <ProfilePicture userid={selectedTeacher.userid} />
               <Text style={styles.modalTitle}>{selectedTeacher.firstname} {selectedTeacher.lastname}</Text>
@@ -187,6 +194,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666666',
     marginTop: 10,
+  },
+  editButton: {
+    backgroundColor: 'green',
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 20,
+    marginTop: 10,
+    alignItems: 'center',
   },
   cancelButton: {
     backgroundColor: 'tomato',

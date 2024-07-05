@@ -8,11 +8,11 @@ const StyledView = styled(View);
 
 const ClassesScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   return (
-    <AuthProvider>
+
       <StyledView className="flex-1">
         <ClassesList navigation={navigation} />
       </StyledView>
-    </AuthProvider>
+
   );
 };
 

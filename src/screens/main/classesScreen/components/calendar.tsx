@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { AuthContext } from '@/src/provider/authProvider'; // Adjust the path as needed
-import { fetchClassesWithTutors, getRecurringDates } from './fetchUserClasses'; // Adjust path as needed
+import { fetchClasses, getRecurringDates } from './fetchUserClasses'; // Adjust path as needed
 
 interface ClassDetails {
   title: string;
@@ -17,7 +17,7 @@ interface ClassDetails {
 const CalendarScreen = () => {
   const [markedDates, setMarkedDates] = useState<{ [date: string]: any }>({});
   const [selectedClasses, setSelectedClasses] = useState<ClassDetails[]>([]);
-  const { session } = useContext(AuthContext);
+  const { session, userData } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchUserClasses = async () => {
@@ -28,7 +28,7 @@ const CalendarScreen = () => {
 
       try {
         const userId = session.user.id;
-        const classesData = await fetchClassesWithTutors(userId);
+        const classesData = await fetchClasses(userId, userData);
 
         const markedDatesObject: { [date: string]: any } = {};
         classesData.forEach(cls => {

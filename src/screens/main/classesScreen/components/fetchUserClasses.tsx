@@ -1,29 +1,48 @@
+import { useContext } from 'react';
 import { supabase } from '../../../../initSupabase';
 
+
 // Function to fetch classes and tutor names based on user's attendance
-const fetchClassesWithTutors = async (userId: string) => {
+export const fetchClasses = async (userId: any, user: any) => {
   try {
     // Fetch classes that the user is attending
-    const { data: attendedClasses, error: attendError } = await supabase
-      .from('classattendee')
-      .select('classid')
-      .eq('userid', userId);
+    const { data: classData, error: classError } =
+      user?.roleid == "1" ?
+        await supabase
+          .from('classtutor')
+          .select('classid')
+          .eq('userid', userId)
+        : await supabase
+          .from('classattendee')
+          .select('classid')
+          .eq('userid', userId);
 
-    if (attendError) {
-      throw attendError;
+ 
+    if (classError) {
+      throw classError;
     }
-
-    // Extract class IDs that the user is attending
-    const attendedClassIds = attendedClasses.map((entry: any) => entry.classid);
-
-    if (attendedClassIds.length === 0) {
+    if (!classData || classData.length === 0) {
       return [];
     }
 
+    // Extract class IDs that the user is attending
+    const classIds = classData.map((entry: any) => entry.classid);
+
+    // if (classIds.length === 0) {
+    //   return [];
+    // }
+
     // Fetch classes and associated tutors
-    const { data: classesData, error: classesError } = await supabase
-      .from('classes')
-      .select(`
+    const { data: classesData, error: classesError } = 
+    user?.roleid == "1"
+      ? await supabase
+        .from('classes')
+        .select('*')
+        .in('classid', classIds)
+        .order('classid', { ascending: true })
+      : await supabase
+        .from('classes')
+        .select(`
         *,
         classtutor (
           users (
@@ -36,9 +55,8 @@ const fetchClassesWithTutors = async (userId: string) => {
           )
         )
       `)
-      .in('classid', attendedClassIds)
-      .order('classid', { ascending: true });
-
+        .in('classid', classIds)
+        .order('classid', { ascending: true });
     if (classesError) {
       throw classesError;
     }
@@ -51,7 +69,7 @@ const fetchClassesWithTutors = async (userId: string) => {
 };
 
 // Function to delete a class for a specific user
-const deleteClass = async (userId: string, classId: string) => {
+export const deleteClass = async (userId: string, classId: string) => {
   try {
     const { error } = await supabase
       .from('classattendee')
@@ -69,7 +87,7 @@ const deleteClass = async (userId: string, classId: string) => {
   }
 };
 
-const getRecurringDates = (startDate: string, weeks: number = 4) => {
+export const getRecurringDates = (startDate: string, weeks: number = 4) => {
   const dates = [];
   const start = new Date(startDate);
 
@@ -82,4 +100,4 @@ const getRecurringDates = (startDate: string, weeks: number = 4) => {
   return dates;
 };
 
-export { fetchClassesWithTutors, getRecurringDates, deleteClass };
+//export { fetchClasses, getRecurringDates, deleteClass };
