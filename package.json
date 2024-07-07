@@ -18,6 +18,7 @@
     "@react-navigation/stack": "^6.3.29",
     "@rneui/themed": "^4.0.0-rc.8",
     "@supabase/supabase-js": "^2.43.4",
+    "date-fns": "^3.6.0",
     "expo": "^51.0.9",
     "expo-image-picker": "~15.0.5",
     "expo-status-bar": "~1.12.1",

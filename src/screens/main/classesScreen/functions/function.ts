@@ -1,5 +1,5 @@
 import { supabase } from "@/src/initSupabase";
-
+import { parse } from 'date-fns';
 interface Subjects {
     subjecttitle: string;
     subjectid: string;
@@ -79,7 +79,7 @@ export const createClass = async ({
     dates
 }: CreateClassProp, session: any): Promise<void> => {
     const start = convertToTime(startTime);
-    const end =  convertToTime(endTime);
+    const end = convertToTime(endTime);
     const class_date = new Date(dates[0]).toISOString().substring(0, 10);
     const details = {
         subjectid: subject,
@@ -99,16 +99,25 @@ export const createClass = async ({
     const { data, error } = await supabase.from('classes').upsert(details).select();
     if (error) {
         throw error;
-    } 
-    
-        
-    const { data: classTutorData, error: classTutorError } = await supabase.from('classtutor').upsert({userid: session?.user.id, classid: data[0].classid}).select();
+    }
+
+
+    const { data: classTutorData, error: classTutorError } = await supabase.from('classtutor').upsert({ userid: session?.user.id, classid: data[0].classid }).select();
     if (classTutorError) {
         throw error;
-    } 
+    }
 }
 
-export const validateTime = (classes: any[], day: string ,time: Date) => {
-    const filteredClasses = classes.filter(cls => cls.class_day.includes(day));
-    console.log(filteredClasses)
+export const validateTime = (classes: any[], day: string, time: Date):boolean => {
+    const formatTime = (timeStr: string): Date => {
+        return parse(timeStr, 'HH:mm:ss', new Date());
+    };
+   return classes
+        .filter(cls => cls.class_day.includes(day))
+        .filter(cls => {
+            return formatTime(cls.start_time) <= time &&
+                formatTime(cls.end_time) >= time
+        })
+        .length >= 1;
+
 }

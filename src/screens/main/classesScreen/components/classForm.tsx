@@ -161,21 +161,35 @@ const ClassForm: React.FC<{ navigation: any }> = ({ navigation }) => {
 
     const onStartTimeChange = (event: any, selectedDate?: Date) => {
         const currentDate = selectedDate || startTime;
-        validateTime(classes, dayOfTheWeekValue, startTime);
-        setStartTime(currentDate);
-        if (currentDate >= endTime) {
-            setEndTime(new Date(currentDate.getTime() + 60 * 60 * 1000)); // Adjust end time if necessary
+
+        if (!validateTime(classes, dayOfTheWeekValue, currentDate)) {
+            
+            if (currentDate >= endTime) {
+                setEndTime(new Date(currentDate.getTime() + 60 * 60 * 1000)); // Adjust end time if necessary
+            }
+            setStartTime(currentDate);
+        } else {
+            alert('Start time collides with another class time.');
         }
+
     };
 
     const onEndTimeChange = (event: any, selectedDate?: Date) => {
         const currentDate = selectedDate || endTime;
-        if (currentDate > startTime) {
-            setEndTime(currentDate);
 
-        } else {
-            alert("End time must be later than start time.");
+        if (!validateTime(classes, dayOfTheWeekValue, currentDate)) {
+            if (currentDate > startTime) {
+                setEndTime(currentDate);
+            } else {
+                setEndTime(new Date(startTime.getTime() + 60 * 60 * 1000)); // Adjust end time if necessary
+                alert("End time must be later than start time.");
+            }
         }
+        else {
+            alert('end time collides with another class time.');
+        }
+
+
     };
 
     return (
