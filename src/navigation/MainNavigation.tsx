@@ -49,6 +49,11 @@ function ClassesStackNavigator() {
         component={CreateClassScreen}
         options={{ title: 'Create Class' }}
       />
+      <ClassesStack.Screen
+        name="Edit Class"
+        component={CreateClassScreen}
+        options={{ title: 'Edit Class' }}
+      />
     </ClassesStack.Navigator>
   );
 }

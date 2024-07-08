@@ -108,6 +108,45 @@ export const createClass = async ({
     }
 }
 
+export const updateClass = async ({
+    title,
+    subject,
+    level,
+    price,
+    classSize,
+    type,
+    startTime,
+    endTime,
+    day,
+    location,
+    description,
+    isRecursive,
+    dates
+}: CreateClassProp, session: any, classId: any): Promise<void> => {
+    const start = convertToTime(startTime);
+    const end = convertToTime(endTime);
+    const class_date = new Date(dates[0]).toISOString().substring(0, 10);
+    const details = {
+        subjectid: subject,
+        class_size: classSize,
+        description: description,
+        start_time: start,
+        end_time: end,
+        location: location,
+        class_day: day,
+        isrecursing: isRecursive,
+        title: title,
+        level: level,
+        price: price,
+        lesson_type: type,
+        class_date
+    }
+    const { data, error } = await supabase.from('classes').update(details).eq('classid', classId);
+    if (error) {
+        throw error;
+    }
+}
+
 export const validateTime = (classes: any[], day: string, time: Date):boolean => {
     const formatTime = (timeStr: string): Date => {
         return parse(timeStr, 'HH:mm:ss', new Date());

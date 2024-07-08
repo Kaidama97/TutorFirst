@@ -3,7 +3,7 @@ import { View, KeyboardAvoidingView, Text, TextInput, StyleSheet, Button, Switch
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
-import { fetchSubject, getDays, createClass, validateTime } from '../functions/function';
+import { fetchSubject, getDays, createClass, validateTime, updateClass } from '../functions/function';
 import { LogBox } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import { AuthContext } from '@/src/provider/authProvider';
@@ -14,8 +14,9 @@ LogBox.ignoreLogs([
     'Warning: TextInputComponent: Support for defaultProps will be removed from function components in a future major release. Use JavaScript default parameters instead.'
 ])
 LogBox.ignoreAllLogs();
-const ClassForm: React.FC<{ navigation: any }> = ({ navigation }) => {
+const ClassForm: React.FC<{ navigation: any; route: any }> = ({ navigation, route }) => {
     const { session, userData } = useContext(AuthContext);
+    const { classDetails } = route.params || {}; // Get class Details from route params
     interface FormattedJson {
         value: string;
         label: string;
@@ -26,11 +27,9 @@ const ClassForm: React.FC<{ navigation: any }> = ({ navigation }) => {
     const [startTime, setStartTime] = useState<Date>(new Date());
     const [endTime, setEndTime] = useState<Date>(new Date(new Date().getTime() + 60 * 60 * 1000));
     const [location, setLocation] = useState<string>('');
-    const [classDay, setClassDay] = useState<string>('');
     const [isRecursive, setIsRecursive] = useState<boolean>(false);
     const [level, setLevel] = useState<string>('');
     const [price, setPrice] = useState<number | undefined>(undefined);
-    const [lesson, setLesson] = useState<string>('');
 
     const [typeValue, setTypeValue] = useState<string>("");
     const [subjectValue, setSubjectValue] = useState<string>("");
@@ -56,7 +55,23 @@ const ClassForm: React.FC<{ navigation: any }> = ({ navigation }) => {
             description !== "" &&
             markedDatesArray.length !== 0
         ) {
-            createClass({
+            classDetails
+            ? updateClass({
+                title,
+                subject: subjectValue,
+                level,
+                price,
+                classSize,
+                type: typeValue,
+                startTime,
+                endTime,
+                day: dayOfTheWeekValue,
+                location,
+                description,
+                isRecursive,
+                dates: markedDatesArray
+            }, session, classDetails.classid)
+            : createClass({
                 title,
                 subject: subjectValue,
                 level,
@@ -86,9 +101,44 @@ const ClassForm: React.FC<{ navigation: any }> = ({ navigation }) => {
             setEndTime(new Date(new Date().getTime() + 60 * 60 * 1000));
 
 
-            navigation.navigate("My Classes");
+            navigation.navigate("Classes");
         } else {
             Alert.alert('Fill up all details');
+        }
+    }
+    const handleScreenInit = () => {
+        if (classDetails) {
+            setTitle(classDetails.title);
+            setSubjectValue(classDetails.subjectid);
+
+            setLevel(classDetails.level);
+            setPrice(classDetails.price);
+            setClassSize(classDetails.class_size);
+            setTypeValue(classDetails.lesson_type);
+            setDayOfTheWeekValue(classDetails.class_day);
+            setMarkedDates({
+                [classDetails.class_date]: {
+                  selected: true,
+                  selectedColor: 'blue',
+                },
+              });
+
+
+            const startDate = new Date();
+            const [startHours, startMinutes] = classDetails.start_time.split(':');
+            startDate.setHours(Number(startHours), Number(startMinutes));
+            setStartTime(startDate);
+        
+            const endDate = new Date();
+            const [endHours, endMinutes] = classDetails.end_time.split(':');
+            endDate.setHours(Number(endHours), Number(endMinutes));
+            setEndTime(endDate);
+            setLocation(classDetails.location);
+            setDescription(classDetails.description);
+            setIsRecursive(classDetails.isrecursing !== null ? Boolean(classDetails.isrecursing) : false);
+   
+
+
         }
     }
     useEffect(() => {
@@ -118,29 +168,10 @@ const ClassForm: React.FC<{ navigation: any }> = ({ navigation }) => {
         };
 
         fetchData();
+        handleScreenInit();
         setDayOfTheWeekItem(getDays());
     }, []);
 
-    const renderDay = (props: any) => {
-        const { date } = props;
-        const day = new Date(date.dateString).getDay().toString();
-        const today = new Date();
-        const selectedDate = new Date(date.dateString);
-
-        if (selectedDate < today || day !== dayValue.toString()) {
-            return (
-                <View style={{ alignItems: 'center' }}>
-                    <Text style={{ color: 'lightgray' }}>{date.day}</Text>
-                </View>
-            );
-        } else {
-            return (
-                <View style={{ alignItems: 'center', }}>
-                    <Text>{date.day}</Text>
-                </View>
-            );
-        }
-    };
     const onDayPress = (day: DateData) => {
         const selectedDay = new Date(day.dateString).getDay().toString();
         const today = new Date();
@@ -163,7 +194,7 @@ const ClassForm: React.FC<{ navigation: any }> = ({ navigation }) => {
         const currentDate = selectedDate || startTime;
 
         if (!validateTime(classes, dayOfTheWeekValue, currentDate)) {
-            
+
             if (currentDate >= endTime) {
                 setEndTime(new Date(currentDate.getTime() + 60 * 60 * 1000)); // Adjust end time if necessary
             }
@@ -202,7 +233,7 @@ const ClassForm: React.FC<{ navigation: any }> = ({ navigation }) => {
                     <Text className="mb-1 ml-1">Title:</Text>
                     <TextInput
                         className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3 border"
-                        placeholder="Title"
+                        placeholder = {"Title"}
                         value={title}
                         onChangeText={setTitle}
                     />
@@ -217,8 +248,8 @@ const ClassForm: React.FC<{ navigation: any }> = ({ navigation }) => {
                             searchField="label"
                             maxHeight={300}
                             labelField="label"
-                            valueField="value"
-                            placeholder="Select subject"
+                            valueField={"value"}
+                            placeholder= { "Select subject" }
                             searchPlaceholder="Search..."
                             value={subjectValue}
                             onChange={(subject) => {
@@ -364,7 +395,7 @@ const ClassForm: React.FC<{ navigation: any }> = ({ navigation }) => {
 
 
 
-                    <Button title="Create Class" onPress={handleCreateClass} />
+                    <Button title={classDetails ? "Edit Class" : "Create Class"} onPress={handleCreateClass} />
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>

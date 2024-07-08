@@ -42,9 +42,9 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
       ]
     );
   };
-  const navigateToEditClass = (classId: string) => {
+  const navigateToEditClass = (classDetails: any) => {
     // Navigate to edit class screen, passing necessary parameters if needed
-    navigation.navigate('EditClass', { classId });
+    navigation.navigate('Edit Class', { classDetails });
   };
   // Function to close the modal
   const closeModal = () => {
@@ -123,7 +123,7 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
         {/* Teacher Details */}
 
         {userData?.roleid == "1"
-          ? <TouchableOpacity style={styles.editButton} onPress={() => navigateToEditClass(selectedClass.classid)}>
+          ? <TouchableOpacity style={styles.editButton} onPress={() => navigateToEditClass(selectedClass)}>
             <Text style={{ color: '#ffffff', fontWeight: 'bold' }}>Edit Class</Text>
           </TouchableOpacity>
 
@@ -144,7 +144,7 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
       {/* Modal for displaying teacher details */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
-          { selectedTeacher && userData?.roleid != "1" &&(
+          { selectedTeacher && userData?.roleid != "1" && (
             <View style={styles.modalContent}>
               <ProfilePicture userid={selectedTeacher.userid} />
               <Text style={styles.modalTitle}>{selectedTeacher.firstname} {selectedTeacher.lastname}</Text>
