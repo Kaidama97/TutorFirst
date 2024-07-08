@@ -17,7 +17,7 @@ export const fetchClasses = async (userId: any, user: any) => {
           .select('classid')
           .eq('userid', userId);
 
- 
+
     if (classError) {
       throw classError;
     }
@@ -33,16 +33,16 @@ export const fetchClasses = async (userId: any, user: any) => {
     // }
 
     // Fetch classes and associated tutors
-    const { data: classesData, error: classesError } = 
-    user?.roleid == "1"
-      ? await supabase
-        .from('classes')
-        .select('*')
-        .in('classid', classIds)
-        .order('classid', { ascending: true })
-      : await supabase
-        .from('classes')
-        .select(`
+    const { data: classesData, error: classesError } =
+      user?.roleid == "1"
+        ? await supabase
+          .from('classes')
+          .select('*')
+          .in('classid', classIds)
+          .order('classid', { ascending: true })
+        : await supabase
+          .from('classes')
+          .select(`
         *,
         classtutor (
           users (
@@ -55,8 +55,8 @@ export const fetchClasses = async (userId: any, user: any) => {
           )
         )
       `)
-        .in('classid', classIds)
-        .order('classid', { ascending: true });
+          .in('classid', classIds)
+          .order('classid', { ascending: true });
     if (classesError) {
       throw classesError;
     }
@@ -68,20 +68,48 @@ export const fetchClasses = async (userId: any, user: any) => {
   }
 };
 
+const removeStudentFromClass = async (userId: string, classId: string) => {
+
+  const { error } = await supabase
+    .from('classattendee')
+    .delete()
+    .eq('userid', userId)
+    .eq('classid', classId);
+
+  if (error) {
+    throw error;
+  }
+}
+const deleteCurrentClass = async (userId: string, classId: string) => {
+  const { error } = await supabase
+    .from('classtutor')
+    .delete()
+    .eq('classid', classId);
+  const { error: attendeeTableError } = await supabase
+    .from('classattendee')
+    .delete()
+    .eq('classid', classId);
+  const { error: classesError } = await supabase
+    .from('classes')
+    .delete()
+    .eq('classid', classId);
+
+
+
+  if (error) {
+    throw error;
+  }
+  if (attendeeTableError) throw attendeeTableError;
+  if (classesError) throw classesError;
+
+}
+
 // Function to delete a class for a specific user
-export const deleteClass = async (userId: string, classId: string) => {
+export const deleteClass = async (userId: string, classId: string, role: any) => {
   try {
-    const { error } = await supabase
-      .from('classattendee')
-      .delete()
-      .eq('userid', userId)
-      .eq('classid', classId);
+    role.toString() === "1" ? deleteCurrentClass(userId, classId) : removeStudentFromClass(userId, classId);
 
-    if (error) {
-      throw error;
-    }
-
-    console.log(`Class with ID ${classId} for user ${userId} deleted successfully.`);
+      console.log(`Class with ID ${classId} for user ${userId} deleted successfully.`);
   } catch (error: any) {
     console.error('Error deleting class:', error.message); // Log the error message
   }

@@ -99,7 +99,7 @@ const ClassForm: React.FC<{ navigation: any; route: any }> = ({ navigation, rout
             setMarkedDates({});
             setStartTime(new Date());
             setEndTime(new Date(new Date().getTime() + 60 * 60 * 1000));
-
+            
 
             navigation.navigate("Classes");
         } else {
@@ -125,20 +125,24 @@ const ClassForm: React.FC<{ navigation: any; route: any }> = ({ navigation, rout
 
 
             const startDate = new Date();
-            const [startHours, startMinutes] = classDetails.start_time.split(':');
-            startDate.setHours(Number(startHours), Number(startMinutes));
+            
+            const [startHours, startMinutes, startSeconds] = classDetails.start_time.split(':');
+            startDate.setHours(Number(startHours), Number(startMinutes), Number(startSeconds));
+            startDate.setMilliseconds(0);
             setStartTime(startDate);
-        
+            console.log(startDate)
+
+
+
             const endDate = new Date();
-            const [endHours, endMinutes] = classDetails.end_time.split(':');
+            const [endHours, endMinutes, endSeconds] = classDetails.end_time.split(':');
             endDate.setHours(Number(endHours), Number(endMinutes));
             setEndTime(endDate);
             setLocation(classDetails.location);
             setDescription(classDetails.description);
             setIsRecursive(classDetails.isrecursing !== null ? Boolean(classDetails.isrecursing) : false);
    
-
-
+            //console.log(startTime, endTime)
         }
     }
     useEffect(() => {

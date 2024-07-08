@@ -40,9 +40,9 @@ const convertToTime = (date: Date): any => {
     // Format the time parts to ensure two digits
     const padToTwoDigits = (num: number) => num.toString().padStart(2, '0');
 
-    const hours = padToTwoDigits(date.getUTCHours());
-    const minutes = padToTwoDigits(date.getUTCMinutes());
-    const seconds = padToTwoDigits(date.getUTCSeconds());
+    const hours = padToTwoDigits(date.getHours());
+    const minutes = padToTwoDigits(date.getMinutes());
+    const seconds = padToTwoDigits(date.getSeconds());
 
     // Construct the time string in the required format
     return `${hours}:${minutes}:00`;
@@ -141,7 +141,7 @@ export const updateClass = async ({
         lesson_type: type,
         class_date
     }
-    const { data, error } = await supabase.from('classes').update(details).eq('classid', classId);
+    const { error } = await supabase.from('classes').update(details).eq('classid', classId);
     if (error) {
         throw error;
     }

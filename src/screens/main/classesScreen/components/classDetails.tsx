@@ -18,7 +18,7 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
         throw new Error('User ID not found');
       }
 
-      await deleteClass(userId, classId); // Implement deleteClass function in fetchUserClasses
+      await deleteClass(userId, classId, userData?.roleid); // Implement deleteClass function in fetchUserClasses
       navigation.navigate('Classes');
     } catch (error) {
       console.error('Error cancelling class:', error);
@@ -134,6 +134,9 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
             </Text>
           </TouchableOpacity>}
 
+          <TouchableOpacity style={styles.editButton} onPress={() => console.log("manage resource")}>
+          <Text style={{ color: '#ffffff', fontWeight: 'bold' }}>Add resources</Text>
+        </TouchableOpacity>
 
         {/* Cancel Button */}
         <TouchableOpacity style={styles.cancelButton} onPress={() => confirmCancelClass(selectedClass.classid)}>
