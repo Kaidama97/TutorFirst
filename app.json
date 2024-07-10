@@ -25,7 +25,8 @@
       "infoPlist": {
         "NSCameraUsageDescription": "We needs camera permissions to allow you to upload profile photos.",
         "NSPhotoLibraryAddUsageDescription": "We needs photo library permissions to allow you to upload profile images.",
-        "NSPhotoLibraryUsageDescription": "We needs photo library permissions to allow you to upload profile images."
+        "NSPhotoLibraryUsageDescription": "We needs photo library permissions to allow you to upload profile images.",
+        "NSDocumentLibraryUsageDescription": "This app needs access to your document library to upload files."
       }
     },
     "android": {
@@ -34,7 +35,9 @@
         "backgroundColor": "#ffffff"
       },
       "permissions": [
-        "android.permission.CAMERA"
+        "android.permission.CAMERA",
+        "READ_EXTERNAL_STORAGE", 
+        "WRITE_EXTERNAL_STORAGE"
       ]
     },
     "web": {
