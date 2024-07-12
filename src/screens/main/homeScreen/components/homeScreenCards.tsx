@@ -1,55 +1,48 @@
 import { AuthContext } from '@/src/provider/authProvider';
-import React, { useContext } from 'react'
+import { Ionicons } from '@expo/vector-icons';
+import React, { useContext } from 'react';
 import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Import Material Community Icons
 
 const HomeScreenCards: React.FC<{ navigation: any, userData: any }> = ({ navigation, userData }) => {
-
-    //const { userData } = useContext(AuthContext);
+  //const { userData } = useContext(AuthContext);
   return (
     <View className="flex-row flex-wrap justify-between mx-2 bg-white">
-        <View className='flex-col w-[48%]'>
-          { userData?.roleid == '1' 
-          ? <TouchableOpacity
+      <View className='flex-col w-[48%]'>
+        <TouchableOpacity
           className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-          onPress={() => navigation.navigate('Create Class')}
+          onPress={() => navigation.navigate('Book Classes')}
         >
-          <Icon name="note-plus" size={24} color="black" />
-          <Text className="text-lg font-bold mt-2 text-center">Create Class</Text>
+          <Ionicons name="search" size={24} color="black" />
+          <Text className="text-lg font-bold mt-2 text-center">Explore classes</Text>
         </TouchableOpacity>
-          : <TouchableOpacity
-            className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => navigation.navigate('Book Classes')}
-          >
-            <Icon name="magnify" size={24} color="black" />
-            <Text className="text-lg font-bold mt-2 text-center">Explore classes</Text>
-          </TouchableOpacity>}
-          <TouchableOpacity
-            className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => navigation.navigate('My Classes')}
-          >
-            <Icon name="book" size={24} color="black" />
-            <Text className="text-lg font-bold mt-2 text-center">My classes</Text>
-          </TouchableOpacity>
-        </View>
-        <View className='flex-col w-[48%]'>
-          <TouchableOpacity
-            className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => navigation.navigate('My Classes')}
-          >
-            <Icon name="bell" size={24} color="black" />
-            <Text className="text-lg font-bold mt-2 text-center">Reminders</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => navigation.navigate('Profile')}
-          >
-            <Icon name="account" size={26} color="black" />
-            <Text className="text-lg font-bold mt-2 text-center">My profile</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
+          onPress={() => navigation.navigate('My Classes')}
+        >
+          <Ionicons name="book" size={24} color="black" />
+          <Text className="text-lg font-bold mt-2 text-center">My classes</Text>
+        </TouchableOpacity>
       </View>
+      <View className='flex-col w-[48%]'>
+        <TouchableOpacity
+          className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
+          onPress={() => navigation.navigate('teacherDetail')}
+        >
+          {/* Replace the Ionicons search icon with a Material Community Icons search icon */}
+          <Icon name="account-search" size={24} color="black" />
+          <Text className="text-lg font-bold mt-2 text-center">Search Teachers</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
+          onPress={() => navigation.navigate('Profile')}
+        >
+          <Ionicons name="person" size={24} color="black" />
+          <Text className="text-lg font-bold mt-2 text-center">My profile</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   )
 }
 
-export default HomeScreenCards
+export default HomeScreenCards;

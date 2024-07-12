@@ -43,10 +43,12 @@ const BookingScreen = ({ navigation }: { navigation: any }) => {
   const currentDate = new Date();
 
   const filteredClasses = classes.filter((cls) => {
+    if (cls.isrecursing) {
+      return true; // Include recurring classes regardless of date
+    }
+
     // Compare class date and time with current date and time
     const classDateTime = new Date(`${cls.class_date}T${cls.start_time}`);
-    
-    // Example: Only show classes that haven't started yet
     return classDateTime > currentDate;
   });
   

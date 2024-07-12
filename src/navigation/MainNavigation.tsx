@@ -22,6 +22,8 @@ import teacherDetail from '../screens/main/homeScreen/components/teacherDetails'
 import CreateClassScreen from '../screens/main/createClassScreen';
 import { AuthContext } from '../provider/authProvider';
 
+import ClassDetailsScreenHome from '../screens/main/homeScreen/components/classDetails';
+
 const HomeStack = createStackNavigator();
 
 function HomeStackNavigator() {
@@ -36,6 +38,11 @@ function HomeStackNavigator() {
       name="teacherDetail"
       component={teacherDetail} 
       options={{ title: "" }} // Adjust options as necessary
+      />
+   <HomeStack.Screen
+        name="ClassDetails"
+        component={ClassDetailsScreenHome}
+        options={{ title: 'Class Details' }}
       />
     </HomeStack.Navigator>
   );

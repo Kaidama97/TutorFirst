@@ -26,40 +26,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       <ReminderList userData={userData}/>
       <HomeScreenCards navigation={navigation} userData={userData}/>
 
-      <View className="flex-row flex-wrap justify-between mx-2 bg-white">
-        <View className='flex-col w-[48%]'>
-          <TouchableOpacity
-            className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => navigation.navigate('Book Classes')}
-          >
-            <Ionicons name="search" size={24} color="black" />
-            <Text className="text-lg font-bold mt-2 text-center">Explore classes</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => navigation.navigate('My Classes')}
-          >
-            <Ionicons name="book" size={24} color="black" />
-            <Text className="text-lg font-bold mt-2 text-center">My classes</Text>
-          </TouchableOpacity>
-        </View>
-        <View className='flex-col w-[48%]'>
-          <TouchableOpacity
-            className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => navigation.navigate('teacherDetail')}
-          >
-            <Ionicons name="search" size={24} color="black" />
-            <Text className="text-lg font-bold mt-2 text-center">Search Teachers</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => navigation.navigate('Profile')}
-          >
-            <Ionicons name="person" size={24} color="black" />
-            <Text className="text-lg font-bold mt-2 text-center">My profile</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      
     </ScrollView>
   );
 };
