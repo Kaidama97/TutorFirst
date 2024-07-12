@@ -76,10 +76,10 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         <View className='flex-col w-[48%]'>
           <TouchableOpacity
             className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-            onPress={() => navigation.navigate('My Classes')}
+            onPress={() => navigation.navigate('teacherDetail')}
           >
-            <Ionicons name="notifications" size={24} color="black" />
-            <Text className="text-lg font-bold mt-2 text-center">Reminders</Text>
+            <Ionicons name="search" size={24} color="black" />
+            <Text className="text-lg font-bold mt-2 text-center">Search Teachers</Text>
           </TouchableOpacity>
           <TouchableOpacity
             className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
