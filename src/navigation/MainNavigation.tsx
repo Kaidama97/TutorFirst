@@ -18,11 +18,33 @@ import ClassDetailsScreen from '../screens/main/bookingScreen/components/classDe
 import ClassDetailsScreenClasses from '../screens/main/classesScreen/components/classDetails';
 import ChatScreen from '../screens/main/chatScreen/components/chat';
 import classChatScreen from '../screens/main/chatScreen/components/classChatScreen';
+<<<<<<< HEAD
 import { AuthContext } from '../provider/authProvider';
 
 
 import CreateClassScreen from '../screens/main/classesScreen/components/classForm';
+=======
+import teacherDetail from '../screens/main/homeScreen/components/teacherDetails';
+>>>>>>> chatscreen
 
+const HomeStack = createStackNavigator();
+
+function HomeStackNavigator() {
+  return (
+    <HomeStack.Navigator>
+      <HomeStack.Screen
+      name="Home"
+      component={Home} 
+      options={{ headerShown: false }} // Adjust options as necessary
+      />
+      <HomeStack.Screen
+      name="teacherDetail"
+      component={teacherDetail} 
+      options={{ title: "" }} // Adjust options as necessary
+      />
+    </HomeStack.Navigator>
+  );
+}
 const ClassesStack = createStackNavigator();
 
 function ClassesStackNavigator() {
@@ -142,8 +164,12 @@ function MyTabs() {
         tabBarInactiveTintColor: 'gray',
       })}
     >
+<<<<<<< HEAD
       <Tab.Screen name="Home" component={Home} />
 
+=======
+      <Tab.Screen name="Home" component={HomeStackNavigator} />
+>>>>>>> chatscreen
       <Tab.Screen name="My Classes" component={ClassesStackNavigator} />
 
       {userData?.roleid != "1" && (
