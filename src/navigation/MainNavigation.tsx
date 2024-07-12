@@ -18,14 +18,9 @@ import ClassDetailsScreen from '../screens/main/bookingScreen/components/classDe
 import ClassDetailsScreenClasses from '../screens/main/classesScreen/components/classDetails';
 import ChatScreen from '../screens/main/chatScreen/components/chat';
 import classChatScreen from '../screens/main/chatScreen/components/classChatScreen';
-<<<<<<< HEAD
-import { AuthContext } from '../provider/authProvider';
-
-
-import CreateClassScreen from '../screens/main/classesScreen/components/classForm';
-=======
 import teacherDetail from '../screens/main/homeScreen/components/teacherDetails';
->>>>>>> chatscreen
+import CreateClassScreen from '../screens/main/createClassScreen';
+import { AuthContext } from '../provider/authProvider';
 
 const HomeStack = createStackNavigator();
 
@@ -164,14 +159,8 @@ function MyTabs() {
         tabBarInactiveTintColor: 'gray',
       })}
     >
-<<<<<<< HEAD
-      <Tab.Screen name="Home" component={Home} />
-
-=======
       <Tab.Screen name="Home" component={HomeStackNavigator} />
->>>>>>> chatscreen
       <Tab.Screen name="My Classes" component={ClassesStackNavigator} />
-
       {userData?.roleid != "1" && (
         <Tab.Screen name="Book Classes" component={BookingStackNavigator} />
       )}
