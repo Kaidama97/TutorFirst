@@ -23,6 +23,7 @@ import CreateClassScreen from '../screens/main/createClassScreen';
 import { AuthContext } from '../provider/authProvider';
 
 import ClassDetailsScreenHome from '../screens/main/homeScreen/components/classDetails';
+import ClassRecommendation from '../screens/main/homeScreen/components/recommendation';
 
 const HomeStack = createStackNavigator();
 
@@ -44,7 +45,13 @@ function HomeStackNavigator() {
         component={ClassDetailsScreenHome}
         options={{ title: 'Class Details' }}
       />
+    <HomeStack.Screen
+        name="classRecommendation"
+        component={ClassRecommendation}
+        options={{ title: "" }}
+      />
     </HomeStack.Navigator>
+    
   );
 }
 const ClassesStack = createStackNavigator();
