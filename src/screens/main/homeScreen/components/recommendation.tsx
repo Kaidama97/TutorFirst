@@ -9,6 +9,7 @@ interface Class {
   title: string;
   subject: string | string[] | null; // Adjust based on your database structure or API response
   description: string;
+  level: string;
 }
 
 const RecommendationPage: React.FC = () => {
@@ -28,10 +29,11 @@ const RecommendationPage: React.FC = () => {
   }, [session]);
 
   const renderItem = ({ item }: { item: Class }) => (
-    <View style={styles.classItem}>
+    <View style={styles.classItem} key={item.id}>
       <Text style={styles.classTitle}>{item.title}</Text>
-      <Text style={styles.classSubject}>{item.subject}</Text>
+      <Text style={styles.classDescription}>{item.level}</Text>
       <Text style={styles.classDescription}>{item.description}</Text>
+      
     </View>
   );
 

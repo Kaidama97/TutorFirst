@@ -11,6 +11,7 @@ interface Class {
   title: string;
   subject: string | string[] | null; // Adjust based on your actual data structure
   description: string;
+  level: string;
 }
 
 export const getUserFavouriteSubjects = async (userId: string): Promise<string[]> => {

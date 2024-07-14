@@ -148,7 +148,7 @@ const SearchTeacherScreen = ({ navigation }: { navigation: any }) => {
                     </TouchableOpacity>
                   ))
                 ) : (
-                  <StyledText>No classes found</StyledText>
+                  <StyledText key={`${teacher.id}-no-classes`}>No classes found</StyledText>
                 )}
               </ScrollView>
             </View>

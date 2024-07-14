@@ -198,7 +198,7 @@ const Form: React.FC<FormProps> = ({ navigation }) => {
                     data={subjectsValue}
                     labelField="label"
                     valueField="value"
-                    placeholder="Select favourite subjects"
+                    placeholder="Select subects you are looking for"
                     searchPlaceholder="Search..."
                     value={selectedSubjects}
                     onChange={item => {

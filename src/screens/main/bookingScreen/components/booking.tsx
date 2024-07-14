@@ -40,19 +40,10 @@ const BookingScreen = ({ navigation }: { navigation: any }) => {
       fetchData();
     }, [fetchData])
   );
+
   const currentDate = new Date();
 
-  const filteredClasses = classes.filter((cls) => {
-    if (cls.isrecursing) {
-      return true; // Include recurring classes regardless of date
-    }
 
-    // Compare class date and time with current date and time
-    const classDateTime = new Date(`${cls.class_date}T${cls.start_time}`);
-    return classDateTime > currentDate;
-  });
-  
-  
   const handleClassSelect = (cls: any) => {
     setSelectedClass(cls);
     setModalVisible(true);
@@ -82,6 +73,32 @@ const BookingScreen = ({ navigation }: { navigation: any }) => {
     const durationMinutes = endMinute - startMinute;
     return `${durationHours}h ${durationMinutes}m`;
   };
+  const filteredClasses = classes.filter((cls) => {
+    if (cls.isrecursing) {
+      return true; // Include recurring classes regardless of date
+    }
+    const classDateTime = new Date(`${cls.class_date}T${cls.start_time}`);
+    return classDateTime > currentDate;
+  });
+
+  // Filter classes based on the search query
+  const searchFilteredClasses = filteredClasses.filter((cls) => {
+    const searchLower = searchQuery.toLowerCase();
+    const classDate = formatDate(cls.class_date); // Format date to include day of the week
+
+    const tutor = cls.classtutor[0];
+    const firstName = tutor?.users?.firstname || 'Unknown Tutor';
+    //console.log("test",firstName);
+
+    return (
+      //cls.classtutor?.firstname.tolowerCase().includes(searchLower) ||
+      firstName.toLowerCase().includes(searchLower) ||
+      cls.title.toLowerCase().includes(searchLower) ||
+      cls.level.toLowerCase().includes(searchLower) ||
+      cls.location.toLowerCase().includes(searchLower) ||
+      classDate.toLowerCase().includes(searchLower)
+    );
+  });
 
   const getSlotStyle = (availableSlots: number) => {
     if (availableSlots > 10) {
@@ -108,7 +125,7 @@ const BookingScreen = ({ navigation }: { navigation: any }) => {
         style={{ backgroundColor: '#ffffff', borderRadius: 10 }}
       />
       <StyledScrollView className="flex-1 mb-0" contentContainerStyle={{ paddingBottom: 10 }}>
-        {filteredClasses.map((cls) => {
+        {searchFilteredClasses.map((cls) => {
           const tutor = cls.classtutor[0];
           const firstName = tutor?.users?.firstname || 'Unknown Tutor';
 
@@ -182,10 +199,9 @@ const BookingScreen = ({ navigation }: { navigation: any }) => {
               <ProfilePicture userid={selectedTeacher.userid} />
               <StyledText className="text-lg font-bold mb-2"><Text>{selectedTeacher.firstname}</Text></StyledText>
               <StyledText style={{ textAlign: 'center', marginBottom: 10 }}>Description: {selectedTeacher.description}</StyledText>
-              <StyledText style={{ textAlign: 'center', marginBottom: 10 }}>Subjects Taught: {selectedTeacher.subjects_taught.join(', ')}</StyledText>
-              <View style={{ marginTop: 10 }}>
-                <Button title="Close" onPress={closeModal} />
-              </View>
+              <StyledText style={{ textAlign: 'center', marginBottom: 10 }}>Subject: {selectedTeacher.subject}</StyledText>
+              <StyledText style={{ textAlign: 'center', marginBottom: 10 }}>Bio: {selectedTeacher.bio}</StyledText>
+              <Button title="Close" onPress={closeModal} />
             </StyledView>
           )}
         </StyledView>
