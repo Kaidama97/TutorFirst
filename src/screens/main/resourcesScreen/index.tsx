@@ -1,11 +1,13 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+
+import { View, ScrollView, Text, ActivityIndicator } from 'react-native';
+import ClassListComponent from './components/classListComponent';
 
 const ResourcesScreen = () => {
+
   return (
-    <View>
-      <Text>Resources Screen</Text>
-    </View>
+    <ScrollView className="flex-1 p-4 bg-white">
+      <ClassListComponent />
+    </ScrollView>
   );
 };
 

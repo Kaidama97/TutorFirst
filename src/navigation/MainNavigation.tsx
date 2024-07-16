@@ -18,11 +18,42 @@ import ClassDetailsScreen from '../screens/main/bookingScreen/components/classDe
 import ClassDetailsScreenClasses from '../screens/main/classesScreen/components/classDetails';
 import ChatScreen from '../screens/main/chatScreen/components/chat';
 import classChatScreen from '../screens/main/chatScreen/components/classChatScreen';
+import teacherDetail from '../screens/main/homeScreen/components/teacherDetails';
+import CreateClassScreen from '../screens/main/createClassScreen';
 import { AuthContext } from '../provider/authProvider';
 
+import ClassDetailsScreenHome from '../screens/main/homeScreen/components/classDetails';
+import ClassRecommendation from '../screens/main/homeScreen/components/recommendation';
 
-import CreateClassScreen from '../screens/main/classesScreen/components/classForm';
+const HomeStack = createStackNavigator();
 
+function HomeStackNavigator() {
+  return (
+    <HomeStack.Navigator>
+      <HomeStack.Screen
+      name="Home"
+      component={Home} 
+      options={{ headerShown: false }} // Adjust options as necessary
+      />
+      <HomeStack.Screen
+      name="teacherDetail"
+      component={teacherDetail} 
+      options={{ title: "" }} // Adjust options as necessary
+      />
+   <HomeStack.Screen
+        name="ClassDetails"
+        component={ClassDetailsScreenHome}
+        options={{ title: 'Class Details' }}
+      />
+    <HomeStack.Screen
+        name="classRecommendation"
+        component={ClassRecommendation}
+        options={{ title: "" }}
+      />
+    </HomeStack.Navigator>
+    
+  );
+}
 const ClassesStack = createStackNavigator();
 
 function ClassesStackNavigator() {
@@ -142,10 +173,8 @@ function MyTabs() {
         tabBarInactiveTintColor: 'gray',
       })}
     >
-      <Tab.Screen name="Home" component={Home} />
-
+      <Tab.Screen name="Home" component={HomeStackNavigator} />
       <Tab.Screen name="My Classes" component={ClassesStackNavigator} />
-
       {userData?.roleid != "1" && (
         <Tab.Screen name="Book Classes" component={BookingStackNavigator} />
       )}

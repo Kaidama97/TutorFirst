@@ -4,6 +4,7 @@ import Home from './components/home';
 import { AuthContext } from '@/src/provider/authProvider';
 import ReminderList from './components/reminderList';
 import HomeScreenCards from './components/homeScreenCards';
+import { Ionicons } from '@expo/vector-icons';
 
 const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { session, userData } = useContext(AuthContext);
@@ -16,6 +17,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       <ReminderList userData={userData}/>
       <HomeScreenCards navigation={navigation} userData={userData}/>
 
+      
     </ScrollView>
   );
 };
