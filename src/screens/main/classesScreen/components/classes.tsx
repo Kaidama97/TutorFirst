@@ -4,7 +4,7 @@ import { fetchClasses, deleteClass } from './fetchUserClasses'; // Adjust path a
 import { AuthContext } from '@/src/provider/authProvider'; // Import the AuthContext
 import { NavigationProp, ParamListBase, useFocusEffect } from '@react-navigation/native';
 import { styled } from 'nativewind';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const StyledScrollView = styled(ScrollView);
 
 interface ClassesListProps {
@@ -63,9 +63,9 @@ const ClassesList: React.FC<ClassesListProps> = ({ navigation }) => {
       </View>
       {userData?.roleid == "1" && (
         <View className="flex justify-center items-center w-full mb-4">
-          <TouchableOpacity 
-          className="flex items-center p-4 border border-gray-300 rounded-md w-full"
-          onPress={() => navigation.navigate("Create Class")}>
+          <TouchableOpacity
+            className="flex items-center p-4 border border-gray-300 rounded-md w-full"
+            onPress={() => navigation.navigate("Create Class")}>
             <View className="flex items-center justify-center">
               <Icon name="plus" size={24} color="tomato" />
               <Text className="mt-2 text-gray-700">Click to create class</Text>
@@ -87,11 +87,26 @@ const ClassesList: React.FC<ClassesListProps> = ({ navigation }) => {
               <View className="flex-row justify-between items-center">
                 <View>
                   <Text className="text-lg font-bold mb-2">{cls.title}</Text>
-                  <Text className="text-base text-gray-600 mb-1">Location: {cls.location}</Text>
-                  <Text className="text-base text-gray-600 mb-1">Date: {cls.class_date}</Text>
-                  <Text className="text-base text-gray-600 mb-1">Time: {cls.start_time} - {cls.end_time}</Text>
+                  <View className="flex-row items-center mb-1">
+                    <Icon name="map-marker" size={16} color="#4A4A4A" />
+                    <Text className="text-base text-gray-600 ml-2">{cls.location}</Text>
+                  </View>
+
+                  <View className="flex-row items-center mb-1">
+                    <Icon name="calendar" size={16} color="#4A4A4A" />
+                    <Text className="text-base text-gray-600 ml-2">{cls.class_date}</Text>
+                  </View>
+
+                  <View className="flex-row items-center mb-1">
+                    <Icon name="clock" size={16} color="#4A4A4A" />
+                    <Text className="text-base text-gray-600 ml-2">{cls.start_time} - {cls.end_time}</Text>
+                  </View>
+
                   {userData?.roleid != "1" && (
-                    <Text className="text-base text-gray-600 mb-1">Teacher: {tutor.firstname} {tutor.lastname}</Text>
+                    <View className="flex-row items-center mb-1">
+                      <Icon name="account" size={16} color="#4A4A4A" />
+                      <Text className="text-base text-gray-600 ml-2">{tutor.firstname} {tutor.lastname}</Text>
+                    </View>
                   )}
                 </View>
               </View>

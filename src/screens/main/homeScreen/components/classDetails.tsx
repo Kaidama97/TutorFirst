@@ -7,7 +7,7 @@ import ProfilePicture from './profilePicture';
 
 const ClassDetailsScreen = ({ route, navigation }: any) => {
   const { selectedClass, selectedTeacher } = route.params;
-  const { session } = useContext(AuthContext);
+  const { session, userData } = useContext(AuthContext);
   const [modalVisible, setModalVisible] = useState(false);
 
   const formatDate = (dateString: string) => {
@@ -164,9 +164,9 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
         <Text style={{ marginTop: 10, fontWeight: 'bold' }}>Teacher: {selectedTeacher.firstname} {selectedTeacher.lastname}</Text>
 
         {/* Book Button */}
-        <TouchableOpacity style={styles.bookButton} onPress={handleBookClass}>
+        { userData?.roleid.toString() !== "1" && <TouchableOpacity style={styles.bookButton} onPress={handleBookClass}>
           <Text style={styles.buttonText}>Book</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>}
 
       </View>
 
