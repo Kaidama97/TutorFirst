@@ -1,15 +1,16 @@
 import { AuthContext } from '@/src/provider/authProvider';
 import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Modal, Button } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { addClassAttendee, fetchUserBookedClasses } from '../../bookingScreen/components/insertClasses';
-import ProfilePicture from './profilePicture';
 
 const ClassDetailsScreen = ({ route, navigation }: any) => {
   const { selectedClass, selectedTeacher } = route.params;
-  const { session } = useContext(AuthContext);
+  const { session, userData } = useContext(AuthContext); // Assuming userData is part of AuthContext
   const [modalVisible, setModalVisible] = useState(false);
-
+  
+  const roleid = Number(userData?.roleid); // Retrieve roleid from userData
+  console.log("roleid", roleid);
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const options = { weekday: 'long' } as const;
@@ -163,13 +164,13 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
         </Text>
         <Text style={{ marginTop: 10, fontWeight: 'bold' }}>Teacher: {selectedTeacher.firstname} {selectedTeacher.lastname}</Text>
 
-        {/* Book Button */}
-        <TouchableOpacity style={styles.bookButton} onPress={handleBookClass}>
-          <Text style={styles.buttonText}>Book</Text>
-        </TouchableOpacity>
-
+        {/* Conditionally Render Book Button */}
+        {roleid === 2 && (
+          <TouchableOpacity style={styles.bookButton} onPress={handleBookClass}>
+            <Text style={styles.buttonText}>Book</Text>
+          </TouchableOpacity>
+        )}
       </View>
-
     </ScrollView>
   );
 };

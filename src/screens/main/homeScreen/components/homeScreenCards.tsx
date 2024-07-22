@@ -1,48 +1,86 @@
 import { AuthContext } from '@/src/provider/authProvider';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useContext } from 'react';
-import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Import Material Community Icons
 
 const HomeScreenCards: React.FC<{ navigation: any, userData: any }> = ({ navigation, userData }) => {
-  //const { userData } = useContext(AuthContext);
+  const roleid = userData?.roleid; // Assuming userData contains roleid
+
   return (
-    <View className="flex-row flex-wrap justify-between mx-2 bg-white">
-      <View className='flex-col w-[48%]'>
+    <View style={styles.container}>
+      {roleid === 2 && (
+        <View style={styles.card}>
+          <TouchableOpacity
+            style={styles.cardContent}
+            onPress={() => navigation.navigate('classRecommendation')}
+          >
+            <Ionicons name="search" size={24} color="black" />
+            <Text style={styles.cardText}>Recommendation</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+      <View style={styles.card}>
         <TouchableOpacity
-          className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-          onPress={() => navigation.navigate('classRecommendation')}
+          style={styles.cardContent}
+          onPress={() => navigation.navigate('teacherDetail')}
         >
-          <Ionicons name="search" size={24} color="black" />
-          <Text className="text-lg font-bold mt-2 text-center">Recomendation</Text>
+          <Icon name="account-search" size={24} color="black" />
+          <Text style={styles.cardText}>Search Teachers</Text>
         </TouchableOpacity>
+      </View>
+      <View style={styles.card}>
         <TouchableOpacity
-          className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
+          style={styles.cardContent}
           onPress={() => navigation.navigate('My Classes')}
         >
           <Ionicons name="book" size={24} color="black" />
-          <Text className="text-lg font-bold mt-2 text-center">My classes</Text>
+          <Text style={styles.cardText}>My classes</Text>
         </TouchableOpacity>
       </View>
-      <View className='flex-col w-[48%]'>
+      <View style={styles.card}>
         <TouchableOpacity
-          className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
-          onPress={() => navigation.navigate('teacherDetail')}
-        >
-          {/* Replace the Ionicons search icon with a Material Community Icons search icon */}
-          <Icon name="account-search" size={24} color="black" />
-          <Text className="text-lg font-bold mt-2 text-center">Search Teachers</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="bg-white rounded-lg p-4 m-2 shadow-lg items-center justify-center h-48"
+          style={styles.cardContent}
           onPress={() => navigation.navigate('Profile')}
         >
           <Ionicons name="person" size={24} color="black" />
-          <Text className="text-lg font-bold mt-2 text-center">My profile</Text>
+          <Text style={styles.cardText}>My profile</Text>
         </TouchableOpacity>
       </View>
     </View>
-  )
-}
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
+  card: {
+    width: '48%',
+    marginBottom: 10,
+  },
+  cardContent: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 150, // Adjust height for square boxes
+    elevation: 3, // For Android shadow effect
+    shadowColor: '#000', // For iOS shadow effect
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+  cardText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+});
 
 export default HomeScreenCards;
