@@ -1,20 +1,37 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { AuthContext } from '@/src/provider/authProvider';
 import { getUserFavouriteSubjects, getRecommendedClasses } from './fetchRecommendation';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 
-// Ensure this interface is consistent and correctly imported
 interface Class {
+  classtutor: Array<{
+    users: {
+      firstname: string;
+      lastname: string;
+      description: string;
+      profilepicture: string;
+      userid: string;
+      subjects_taught: string[];
+    };
+  }>;
   id: string;
   title: string;
-  subject: string | string[] | null; // Adjust based on your database structure or API response
+  subject: string | string[] | null;
   description: string;
   level: string;
 }
 
+
+type RootStackParamList = {
+  ClassDetails: { selectedClass: Class; selectedTeacher: any };
+  // Add other screens and their params here if needed
+};
+
 const RecommendationPage: React.FC = () => {
   const { session } = useContext(AuthContext);
-  const [recommendedClasses, setRecommendedClasses] = useState<Class[]>([]); // Explicitly specify Class[]
+  const [recommendedClasses, setRecommendedClasses] = useState<Class[]>([]);
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   useEffect(() => {
     const fetchRecommendedClasses = async () => {
@@ -28,12 +45,21 @@ const RecommendationPage: React.FC = () => {
     fetchRecommendedClasses();
   }, [session]);
 
+  const handleViewDetail = (selectedClass: Class) => {
+    console.log(selectedClass.classtutor); // Log the entire classtutor object
+    const selectedTeacher = selectedClass.classtutor[0]?.users;
+    console.log(selectedTeacher); // Log selectedTeacher to see its value
+    navigation.navigate('ClassDetails', { selectedClass, selectedTeacher });
+  };
+
   const renderItem = ({ item }: { item: Class }) => (
-    <View style={styles.classItem} key={item.id}>
+    <View style={styles.classItem}>
       <Text style={styles.classTitle}>{item.title}</Text>
       <Text style={styles.classDescription}>{item.level}</Text>
       <Text style={styles.classDescription}>{item.description}</Text>
-      
+      <TouchableOpacity style={styles.viewDetailButton} onPress={() => handleViewDetail(item)}>
+        <Text style={styles.buttonText}>View Detail</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -43,7 +69,7 @@ const RecommendationPage: React.FC = () => {
       <FlatList
         data={recommendedClasses}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id} // Ensure a unique key for each item
       />
     </View>
   );
@@ -77,6 +103,18 @@ const styles = StyleSheet.create({
   classDescription: {
     fontSize: 14,
     color: '#777',
+  },
+  viewDetailButton: {
+    backgroundColor: 'blue',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 5,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
   },
 });
 

@@ -56,7 +56,7 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
           "You have another class booked at the same time. Please choose a different time slot.",
           [{ text: "OK", style: "cancel" }]
         );
-        navigation.navigate('teacherDetail', { selectedClass });
+        navigation.goBack();
       } else {
         Alert.alert(
           "Confirm Booking",

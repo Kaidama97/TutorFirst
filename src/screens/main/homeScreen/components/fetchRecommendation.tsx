@@ -7,12 +7,23 @@ interface User {
 }
 
 interface Class {
+  classtutor: Array<{
+    users: {
+      firstname: string;
+      lastname: string;
+      description: string;
+      profilepicture: string;
+      userid: string;
+      subjects_taught: string[];
+    };
+  }>;
   id: string;
   title: string;
-  subject: string | string[] | null; // Adjust based on your actual data structure
+  subject: string | string[] | null;
   description: string;
   level: string;
 }
+
 
 export const getUserFavouriteSubjects = async (userId: string): Promise<string[]> => {
   const { data, error } = await supabase
@@ -26,7 +37,7 @@ export const getUserFavouriteSubjects = async (userId: string): Promise<string[]
     return [];
   }
 
-  console.log(data);
+  //console.log(data);
   return data?.favourite_subjects || [];
 };
 
@@ -36,12 +47,29 @@ export const getRecommendedClasses = async (favouriteSubjects: string[]): Promis
   // Fetch all classes and then filter based on the subject array
   const { data: allClasses, error: classError } = await supabase
     .from('classes')
-    .select('*');
+    .select(`
+      *,
+      classtutor (
+        users (
+          firstname,
+          description,
+          profilepicture,
+          userid,
+          lastname,
+          subjects_taught
+        )
+      ),
+      classattendee (
+        classid
+      )
+    `);
 
   if (classError) {
     console.error(classError);
     return [];
   }
+
+  console.log(allClasses); // Log the structure of allClasses
 
   // Filter classes where at least one subject matches any favourite subject
   const recommendedClasses = allClasses.filter(cls => {
@@ -54,6 +82,6 @@ export const getRecommendedClasses = async (favouriteSubjects: string[]): Promis
     }
   });
 
-  console.log(recommendedClasses);
+  console.log(recommendedClasses); // Log the structure of recommendedClasses
   return recommendedClasses;
 };
