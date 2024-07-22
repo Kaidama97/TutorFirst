@@ -120,7 +120,7 @@ const SearchTeacherScreen = ({ navigation }: { navigation: any }) => {
           <View key={teacher.id} style={styles.teacherContainer}>
             {/* Top Section: Profile, Subjects, Bio */}
             <View style={styles.topContainer}>
-              <ProfilePicture userId = {teacher.id}/>
+              <ProfilePicture/>
               <View className='pl-3' style={styles.textContainer}>
                 <Text style={styles.teacherName}>{teacher.firstname} {teacher.lastname}</Text>
                 <View className="flex-row items-center mb-1">

@@ -4,7 +4,7 @@ import { AuthContext } from "@/src/provider/authProvider";
 import * as ImagePicker from 'expo-image-picker';
 import { supabase } from '@/src/initSupabase';
 
-const ProfilePicture: React.FC<{ userId: any }> = ({ userId }) => {
+export default function ProfilePicture() {
   const { session } = useContext(AuthContext);
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [profilePictureUrl, setProfilePictureUrl] = useState<string>('');
@@ -20,7 +20,8 @@ const ProfilePicture: React.FC<{ userId: any }> = ({ userId }) => {
     })();
     fetchProfileImage();
 
-  }, [userId]); // Add userId as a dependency
+  }, []);
+
 
   const fetchProfileImage = async () => {
     setLoading(true);
@@ -28,7 +29,7 @@ const ProfilePicture: React.FC<{ userId: any }> = ({ userId }) => {
       const { data, error } = await supabase
         .from('users')
         .select('profilepicture')
-        .eq('userid', userId)
+        .eq('userid', session?.user?.id)
         .single();
 
       if (error) {
@@ -71,7 +72,7 @@ const ProfilePicture: React.FC<{ userId: any }> = ({ userId }) => {
         ) : imageUri ? (
           <Image
             source={{ uri: imageUri }}
-            style={[{ height: 75, width: 75, borderWidth: 0 }, styles.avatar, styles.image]}
+            style={[{ height: 100, width: 100, borderWidth: 0 }, styles.avatar, styles.image]}
           />
         ) : (
           <View style={styles.placeholder}>
@@ -84,22 +85,23 @@ const ProfilePicture: React.FC<{ userId: any }> = ({ userId }) => {
       </TouchableOpacity>
 
       <Modal visible={isEnlarged} transparent animationType="fade">
-        <TouchableWithoutFeedback onPress={toggleEnlarged}>
-          <View style={styles.modalBackground}>
+        <View style={styles.modalBackground}>
+          <TouchableWithoutFeedback onPress={toggleEnlarged}>
             {imageUri && (
               <Image
                 source={{ uri: imageUri }}
                 style={styles.enlargedImage}
               />
             )}
-          </View>
-        </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>
+        </View>
       </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  
   container: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -119,8 +121,8 @@ const styles = StyleSheet.create({
   placeholder: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 75,
-    height: 75,
+    width: 100,
+    height: 100,
     borderRadius: 50,
     backgroundColor: '#9d9d9d',
   },
@@ -141,5 +143,3 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
 });
-
-export default ProfilePicture;
