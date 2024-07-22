@@ -20,8 +20,7 @@ const ProfilePicture: React.FC<{ userId: any }> = ({ userId }) => {
     })();
     fetchProfileImage();
 
-  }, []);
-
+  }, [userId]); // Add userId as a dependency
 
   const fetchProfileImage = async () => {
     setLoading(true);
@@ -85,23 +84,22 @@ const ProfilePicture: React.FC<{ userId: any }> = ({ userId }) => {
       </TouchableOpacity>
 
       <Modal visible={isEnlarged} transparent animationType="fade">
-        <View style={styles.modalBackground}>
-          <TouchableWithoutFeedback onPress={toggleEnlarged}>
+        <TouchableWithoutFeedback onPress={toggleEnlarged}>
+          <View style={styles.modalBackground}>
             {imageUri && (
               <Image
                 source={{ uri: imageUri }}
                 style={styles.enlargedImage}
               />
             )}
-          </TouchableWithoutFeedback>
-        </View>
+          </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  
   container: {
     alignItems: 'center',
     justifyContent: 'center',
