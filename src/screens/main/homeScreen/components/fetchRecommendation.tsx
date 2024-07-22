@@ -15,6 +15,7 @@ interface Class {
       profilepicture: string;
       userid: string;
       subjects_taught: string[];
+      gender: string; // Added gender field
     };
   }>;
   id: string;
@@ -23,7 +24,6 @@ interface Class {
   description: string;
   level: string;
 }
-
 
 export const getUserFavouriteSubjects = async (userId: string): Promise<string[]> => {
   const { data, error } = await supabase
@@ -37,14 +37,14 @@ export const getUserFavouriteSubjects = async (userId: string): Promise<string[]
     return [];
   }
 
-  //console.log(data);
   return data?.favourite_subjects || [];
 };
-
-export const getRecommendedClasses = async (favouriteSubjects: string[]): Promise<Class[]> => {
-  console.log(favouriteSubjects);
-  
-  // Fetch all classes and then filter based on the subject array
+export const getRecommendedClasses = async (
+  favouriteSubjects: string[],
+  sortOption: string,
+  genderFilter: string | null
+): Promise<Class[]> => {
+  // Fetch all classes and related tutor data
   const { data: allClasses, error: classError } = await supabase
     .from('classes')
     .select(`
@@ -56,7 +56,8 @@ export const getRecommendedClasses = async (favouriteSubjects: string[]): Promis
           profilepicture,
           userid,
           lastname,
-          subjects_taught
+          subjects_taught,
+          gender
         )
       ),
       classattendee (
@@ -69,10 +70,8 @@ export const getRecommendedClasses = async (favouriteSubjects: string[]): Promis
     return [];
   }
 
-  console.log(allClasses); // Log the structure of allClasses
-
-  // Filter classes where at least one subject matches any favourite subject
-  const recommendedClasses = allClasses.filter(cls => {
+  // Filter classes based on favourite subjects
+  const filteredClasses = allClasses.filter(cls => {
     if (cls.subject === null) {
       return false; // Skip classes with null subjects
     } else if (Array.isArray(cls.subject)) {
@@ -82,6 +81,22 @@ export const getRecommendedClasses = async (favouriteSubjects: string[]): Promis
     }
   });
 
-  console.log(recommendedClasses); // Log the structure of recommendedClasses
-  return recommendedClasses;
+  // Filter by gender if specified
+  const genderFilteredClasses = genderFilter
+    ? filteredClasses.filter(cls => cls.classtutor.some((tutor: { users: { gender: string; }; }) => tutor.users.gender === genderFilter))
+    : filteredClasses;
+
+  // Sort classes based on the selected option
+  const sortedClasses = genderFilteredClasses.sort((a, b) => {
+    if (sortOption === 'gender') {
+      // Gender-based sorting is handled in filtering
+      return 0;
+    }
+
+    // Default sorting by title if not 'gender'
+    return a.title.localeCompare(b.title);
+  });
+
+  return sortedClasses;
 };
+
