@@ -133,10 +133,10 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
               Teacher: {selectedTeacher.firstname} {selectedTeacher.lastname}
             </Text>
           </TouchableOpacity>}
-
-          <TouchableOpacity style={styles.editButton} onPress={() => console.log("manage resource")}>
-          <Text style={{ color: '#ffffff', fontWeight: 'bold' }}>Add resources</Text>
-        </TouchableOpacity>
+{/* 
+       { userData?.roleid.toString() === "1"  && <TouchableOpacity style={styles.editButton} onPress={() => console.log("manage resource")}>
+        <Text style={{ color: '#ffffff', fontWeight: 'bold' }}>Add resources</Text>
+      </TouchableOpacity> }  */}
 
         {/* Cancel Button */}
         <TouchableOpacity style={styles.cancelButton} onPress={() => confirmCancelClass(selectedClass.classid)}>

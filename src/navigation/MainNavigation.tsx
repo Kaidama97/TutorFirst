@@ -8,7 +8,6 @@ import Home from '../screens/main/homeScreen/index'; // Update this path as nece
 import Profile from '../screens/main/profileScreen/index'; // Update this path as necessary
 import Bookings from '../screens/main/bookingScreen/index'; // Update this path as necessary
 import Resources from '../screens/main/resourcesScreen/index'; // Update this path as necessary
-import Chat from '../screens/main/chatScreen/index'; // Import the Chat screen component
 
 
 import { createStackNavigator } from '@react-navigation/stack';

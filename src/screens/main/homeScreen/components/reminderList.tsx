@@ -2,6 +2,8 @@ import React, { useContext, useState, useCallback } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { supabase } from '@/src/initSupabase';
 import { AuthContext } from '@/src/provider/authProvider';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import { useFocusEffect } from '@react-navigation/native';
 
 interface ClassItem {
@@ -15,7 +17,7 @@ interface ClassItem {
     lesson_type: string;
 }
 
-const ReminderList: React.FC<{ userData: any }> = ({userData }) => {
+const ReminderList: React.FC<{ userData: any }> = ({ userData }) => {
     const [classes, setClasses] = useState<ClassItem[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const { session } = useContext(AuthContext);
@@ -26,15 +28,15 @@ const ReminderList: React.FC<{ userData: any }> = ({userData }) => {
 
         setLoading(true);
 
-        const { data, error } = userData?.roleid =="1"
-        ? await supabase
-        .from('classtutor')
-        .select('classid')
-        .eq('userid', session?.user.id)
-        : await supabase
-        .from('classattendee')
-        .select('classid')
-        .eq('userid', session?.user.id)
+        const { data, error } = userData?.roleid == "1"
+            ? await supabase
+                .from('classtutor')
+                .select('classid')
+                .eq('userid', session?.user.id)
+            : await supabase
+                .from('classattendee')
+                .select('classid')
+                .eq('userid', session?.user.id)
 
         if (error) {
             console.error(error);
@@ -79,8 +81,14 @@ const ReminderList: React.FC<{ userData: any }> = ({userData }) => {
             key={classItem.classid}
             className="p-2 border border-gray-300 rounded-lg mb-2 bg-white shadow-md">
             <Text className="text-lg font-bold mb-2">{classItem.title} ({classItem.lesson_type})</Text>
-            <Text className="text-sm text-gray-600 mb-1">Location: {classItem.location}</Text>
-            <Text className="text-sm text-gray-600 mb-1">Time: {classItem.start_time} - {classItem.end_time} </Text>
+            <View className="flex-row items-center mb-1">
+            <Icon name="map-marker" size={16} color="#4A4A4A" />
+                <Text className="ml-1 text-sm text-gray-600">{classItem.location}</Text>
+            </View>
+            <View className="flex-row items-center mb-1">
+            <Icon name="clock" size={16} color="#4A4A4A" />
+            <Text className="text-sm text-gray-600 mb-1">{classItem.start_time} - {classItem.end_time} </Text>
+            </View>
         </View>
     );
 

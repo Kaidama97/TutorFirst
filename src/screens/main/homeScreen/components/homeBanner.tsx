@@ -1,14 +1,10 @@
 import React, { useContext, useEffect } from 'react';
 import { View, Text, ScrollView, Button, Dimensions, ImageBackground } from 'react-native';
-import { theme } from '../../../../assets/theme/theme';
 import moment from 'moment-timezone';
-import { AuthContext } from '@/src/provider/authProvider';
 import { studentsQuotes, teachersQuotes } from '@/src/constants/constants';
-import { Ionicons } from '@expo/vector-icons';
-//import Carousel from 'react-native-reanimated-carousel';
 
 
-const HomeScreen: React.FC<{ userData: any }> = ({ userData }) => {
+const HomeScreenBanner: React.FC<{ userData: any }> = ({ userData }) => {
   const currentDateTime = moment();
   const timeZone = moment.tz.guess();
   const formattedDateTime = currentDateTime.format('DD/MM/YYYY HH:mm:ss');
@@ -67,5 +63,5 @@ const HomeScreen: React.FC<{ userData: any }> = ({ userData }) => {
   );
 };
 
-export default HomeScreen;
+export default HomeScreenBanner;
 

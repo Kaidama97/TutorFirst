@@ -4,6 +4,7 @@ import { AuthContext } from '@/src/provider/authProvider';
 import { getUserFavouriteSubjects, getRecommendedClasses } from './fetchRecommendation';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons'; // Icon for the dropdown
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface Class {
   classtutor: Array<{

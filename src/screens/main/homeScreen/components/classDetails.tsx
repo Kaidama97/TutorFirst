@@ -6,7 +6,7 @@ import { addClassAttendee, fetchUserBookedClasses } from '../../bookingScreen/co
 
 const ClassDetailsScreen = ({ route, navigation }: any) => {
   const { selectedClass, selectedTeacher } = route.params;
-  const { session, userData } = useContext(AuthContext); // Assuming userData is part of AuthContext
+  const { session, userData } = useContext(AuthContext);
   const [modalVisible, setModalVisible] = useState(false);
   
   const roleid = Number(userData?.roleid); // Retrieve roleid from userData

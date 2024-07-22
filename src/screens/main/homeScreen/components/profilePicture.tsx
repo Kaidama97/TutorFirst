@@ -4,7 +4,7 @@ import { AuthContext } from "@/src/provider/authProvider";
 import * as ImagePicker from 'expo-image-picker';
 import { supabase } from '@/src/initSupabase';
 
-export default function ProfilePicture() {
+const ProfilePicture: React.FC<{ userId: any }> = ({ userId }) => {
   const { session } = useContext(AuthContext);
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [profilePictureUrl, setProfilePictureUrl] = useState<string>('');
@@ -29,7 +29,7 @@ export default function ProfilePicture() {
       const { data, error } = await supabase
         .from('users')
         .select('profilepicture')
-        .eq('userid', session?.user?.id)
+        .eq('userid', userId)
         .single();
 
       if (error) {
@@ -72,7 +72,7 @@ export default function ProfilePicture() {
         ) : imageUri ? (
           <Image
             source={{ uri: imageUri }}
-            style={[{ height: 100, width: 100, borderWidth: 0 }, styles.avatar, styles.image]}
+            style={[{ height: 75, width: 75, borderWidth: 0 }, styles.avatar, styles.image]}
           />
         ) : (
           <View style={styles.placeholder}>
@@ -121,8 +121,8 @@ const styles = StyleSheet.create({
   placeholder: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 100,
-    height: 100,
+    width: 75,
+    height: 75,
     borderRadius: 50,
     backgroundColor: '#9d9d9d',
   },
@@ -143,3 +143,5 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
 });
+
+export default ProfilePicture;

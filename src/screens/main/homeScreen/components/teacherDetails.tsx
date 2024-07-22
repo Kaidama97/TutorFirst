@@ -3,10 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { styled } from 'nativewind';
 import { supabase } from '../../../../initSupabase';
 import ProfilePicture from '../components/profilePicture';
-
-const StyledView = styled(View);
-const StyledText = styled(Text);
-
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 type Teacher = {
   id: string;
   classid: any;
@@ -15,7 +12,8 @@ type Teacher = {
   profilepicture: string;
   description: string;
   subjects_taught: string[];
-  classes_taught: { id: string; title: string; class_date: string; class_day: string; isrecursing: boolean;
+  classes_taught: {
+    id: string; title: string; class_date: string; class_day: string; isrecursing: boolean;
     start_time: any; end_time: any; class_size: any; classattendee: any; description: any; location: any; level: any; lesson_type: any;
   }[];
 };
@@ -34,7 +32,7 @@ const SearchTeacherScreen = ({ navigation }: { navigation: any }) => {
         .from('users')
         .select('*')
         .eq('roleid', 1); // Fetch users where roleid == 1 (teachers)
-      
+
       if (error) {
         throw error;
       }
@@ -56,7 +54,7 @@ const SearchTeacherScreen = ({ navigation }: { navigation: any }) => {
 
         const classIds = classTutors ? classTutors.map((entry: any) => entry.classid) : [];
 
-        let { data: classes, error: classError } = await supabase
+        const { data: classes, error: classError } = await supabase
           .from('classes')
           .select(`*,
             classattendee (
@@ -94,8 +92,8 @@ const SearchTeacherScreen = ({ navigation }: { navigation: any }) => {
           classid: cls.classid,
 
         })) : [];
-
-        return { ...teacher, classes_taught };
+        // console.log(...teacher)
+        return { ...teacher, id: teacher.userid, classes_taught };
       });
 
       const teachersWithClasses = await Promise.all(teacherPromises);
@@ -115,47 +113,60 @@ const SearchTeacherScreen = ({ navigation }: { navigation: any }) => {
   };
 
   return (
-    <StyledView style={{ flex: 1, padding: 10 }}>
+    <View style={{ flex: 1, padding: 10 }}>
       {/* Teachers List */}
       <ScrollView showsVerticalScrollIndicator={false}>
         {filteredTeachers.map((teacher) => (
-          <StyledView key={teacher.id} style={styles.teacherContainer}>
+          <View key={teacher.id} style={styles.teacherContainer}>
             {/* Top Section: Profile, Subjects, Bio */}
             <View style={styles.topContainer}>
-              <ProfilePicture />
-              <View style={styles.textContainer}>
-                <StyledText style={styles.teacherName}>{teacher.firstname} {teacher.lastname}</StyledText>
-                <StyledText style={styles.subjects}>{teacher.subjects_taught.join(', ')}</StyledText>
-                <StyledText style={styles.description}>{teacher.description}</StyledText>
+              <ProfilePicture userId = {teacher.id}/>
+              <View className='pl-3' style={styles.textContainer}>
+                <Text style={styles.teacherName}>{teacher.firstname} {teacher.lastname}</Text>
+                <View className="flex-row items-center mb-1">
+                  <Icon name="book" size={16} color="#4A4A4A" />
+
+                  <Text className='ml-2 text-sm text-gray-600'>{teacher.subjects_taught.join(', ')}</Text>
+                </View>
+                <View className="flex-row items-center mb-1">
+                  <Icon name="text-box" size={16} color="#4A4A4A" />
+
+                  <Text className='ml-2 text-sm text-gray-600'>{teacher.description}</Text>
+                </View>
               </View>
             </View>
 
             {/* Bottom Section: Classes Taught */}
             <View style={styles.classesContainer}>
-              <StyledText style={styles.sectionTitle}>Classes Taught</StyledText>
+              <Text style={styles.sectionTitle}>Classes Taught</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {teacher.classes_taught.length > 0 ? (
                   teacher.classes_taught.map((cls) => (
+                    
                     <TouchableOpacity
                       key={cls.id}
                       onPress={() => navigateToClassDetails(cls, teacher)}
                       style={styles.classCard}
+                      className='pb-2'
                     >
-                      <StyledText style={styles.classTitle}>{cls.title}</StyledText>
-                      <StyledText style={styles.classDescription}>
-                        {cls.isrecursing ? cls.class_day : `${cls.class_date} - ${cls.class_day}`}
-                      </StyledText>
+                      <Text style={styles.classTitle}>{cls.title}</Text>
+                      <View className="flex-row items-center mb-1">
+                        <Icon name="calendar-month" size={16} color="#4A4A4A" />
+                        <Text className='pl-1' style={styles.classDescription}>
+                          {cls.isrecursing ? cls.class_day : `${cls.class_date} - ${cls.class_day}`}
+                        </Text>
+                      </View>
                     </TouchableOpacity>
                   ))
                 ) : (
-                  <StyledText key={`${teacher.id}-no-classes`}>No classes found</StyledText>
+                  <Text key={`${teacher.id}-no-classes`}>No classes found</Text>
                 )}
               </ScrollView>
             </View>
-          </StyledView>
+          </View>
         ))}
       </ScrollView>
-    </StyledView>
+    </View>
   );
 };
 
