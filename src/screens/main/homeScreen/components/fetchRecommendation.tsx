@@ -25,7 +25,7 @@ interface Class {
   level: string;
 }
 
-export const getUserFavouriteSubjects = async (userId: string): Promise<string[]> => {
+export const getUsersSubjects  = async (userId: string): Promise<string[]> => {
   const { data, error } = await supabase
     .from('users') // Specify the row type for users
     .select('favourite_subjects')

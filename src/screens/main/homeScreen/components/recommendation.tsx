@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, Pressable } from 'react-native';
 import { AuthContext } from '@/src/provider/authProvider';
-import { getUserFavouriteSubjects, getRecommendedClasses } from './fetchRecommendation';
+import { getUsersSubjects , getRecommendedClasses } from './fetchRecommendation';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons'; // Icon for the dropdown
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -42,7 +42,7 @@ const RecommendationPage: React.FC = () => {
     const fetchRecommendedClasses = async () => {
       if (!session?.user?.id) return;
 
-      const favouriteSubjects = await getUserFavouriteSubjects(session.user.id);
+      const favouriteSubjects = await getUsersSubjects(session.user.id);
       const classes = await getRecommendedClasses(favouriteSubjects, sortOption, genderFilter); // Pass genderFilter
       setRecommendedClasses(classes);
     };
