@@ -1,19 +1,13 @@
-import React, { useContext } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { AuthContext, AuthProvider } from './src/provider/authProvider';
-import AppNavigation from './src/navigation';
-import { LogBox } from 'react-native';
-
-
+import React from 'react';
+import { AuthProvider } from './src/provider/authProvider';
+import AppNavigation from './src/navigation/index';
 
 const App = () => {
-  LogBox.ignoreAllLogs();
   return (
     <AuthProvider>
-      <AppNavigation/>
+      <AppNavigation />
     </AuthProvider>
   );
-  
 };
 
 export default App;

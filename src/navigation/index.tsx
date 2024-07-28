@@ -5,7 +5,7 @@ import { AuthContext, AuthProvider } from '../provider/authProvider';
 import AuthNavigation from './AuthNavigation';
 import MainNavigation from './MainNavigation';
 import RegisterNavigation from './registerNavigation';
-import LoadingScreen from '../screens/register/loadingScreen';
+import LoadingScreen from '../screens/register/loadingScreen/index';
 
 const AppNavigation = () => {
 
@@ -23,7 +23,5 @@ const AppNavigation = () => {
       </NavigationContainer>
   );
 }
-
-
 
 export default AppNavigation;

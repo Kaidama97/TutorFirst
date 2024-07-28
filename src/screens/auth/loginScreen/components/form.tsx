@@ -1,27 +1,20 @@
-import React, { useContext, useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import React, { useContext, useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { styled } from 'nativewind';
 import Button from '../../../../components/button';
-
-import { supabase } from '../../../../initSupabase';
 import { AuthContext } from "@/src/provider/authProvider";
-import { AuthApiError } from "@supabase/supabase-js";
 
 const StyledView = styled(View);
 const StyledTextInput = styled(TextInput);
 const StyledTouchableOpacity = styled(TouchableOpacity);
 const StyledText = styled(Text);
 
-
 interface FormProps {
   navigation: any; // Adjust the type according to the actual navigation prop type
 }
 
 const Form: React.FC<FormProps> = ({ navigation }) => {
-
-  
-const { handleLogin } = useContext(AuthContext);
-
+  const { handleLogin } = useContext(AuthContext);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -33,30 +26,29 @@ const { handleLogin } = useContext(AuthContext);
   };
 
   const login = async () => {
-    if(validateEmail(email)) {
+    console.log("Login function called with:", email, password); // Log the function call
+    if (validateEmail(email)) {
       setIsValidEmail(true);
       setLoading(true);
-        if (handleLogin) {
-          try {
-            await handleLogin(email, password);
-          } catch (error) {
-
-            console.log(error);
-            alert("Invaild Credentials");
-          }
-          
-        } 
-      
+      if (handleLogin) {
+        try {
+          console.log("Calling handleLogin with:", email, password);
+          await handleLogin(email, password);
+        } catch (error) {
+          console.log(error);
+          alert("Invalid Credentials");
+        }
+      }
     } else {
       setIsValidEmail(false);
     }
-  }
-
+    setLoading(false);
+  };
 
   return (
     <View className="form space-y-2">
       <TextInput
-        placeholder="Enter your email"
+        placeholder="Email"
         keyboardType="email-address"
         autoCapitalize="none"
         className={`p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3 ${!isValidEmail ? 'border-red-500' : 'border-gray-300'}`}
@@ -69,7 +61,6 @@ const { handleLogin } = useContext(AuthContext);
         className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
         onChangeText={(text) => setPassword(text)}
       />
-      
       <TouchableOpacity className="flex items-end mb-5">
         <Text>Forgot Password?</Text>
       </TouchableOpacity>
@@ -78,8 +69,7 @@ const { handleLogin } = useContext(AuthContext);
         text="Log In"
         onPress={() => login()}
       />
-
-
+      {loading && <ActivityIndicator testID="loading-indicator" />}
       <View className="flex-row justify-center">
         <Text className="text-gray-500 font-semibold">
           Don't have an account?

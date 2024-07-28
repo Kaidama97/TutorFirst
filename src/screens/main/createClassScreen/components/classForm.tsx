@@ -4,15 +4,10 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
 import { fetchSubject, getDays, createClass } from '../functions/function';
-import { LogBox } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import { AuthContext } from '@/src/provider/authProvider';
 
-// Ignore specific warnings
-LogBox.ignoreLogs([
-    'Warning: TextInputComponent: Support for defaultProps will be removed from function components in a future major release. Use JavaScript default parameters instead.'
-])
-LogBox.ignoreAllLogs();
+
 const ClassForm: React.FC<{ navigation: any }> = ({ navigation }) => {
     const { session } = useContext(AuthContext);
     interface FormattedJson {

@@ -42,6 +42,7 @@ const ClassDetailsScreen = ({ route, navigation }: any) => {
   const handleBookClass = async () => {
     try {
       const userId = session?.user.id;
+      
       if (!userId) {
         console.error('User ID not found');
         return;

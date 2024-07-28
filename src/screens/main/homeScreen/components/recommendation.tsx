@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Modal, Pressable } from 'react-native';
 import { AuthContext } from '@/src/provider/authProvider';
-import { getUsersSubjects , getRecommendedClasses } from './fetchRecommendation';
+import { getUsersSubjects, getRecommendedClasses } from './fetchRecommendation';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons'; // Icon for the dropdown
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -60,7 +60,11 @@ const RecommendationPage: React.FC = () => {
       <Text style={styles.classTitle}>{item.title}</Text>
       <Text style={styles.classDescription}>{item.level}</Text>
       <Text style={styles.classDescription}>{item.description}</Text>
-      <TouchableOpacity style={styles.viewDetailButton} onPress={() => handleViewDetail(item)}>
+      <TouchableOpacity
+        style={styles.viewDetailButton}
+        onPress={() => handleViewDetail(item)}
+        testID={`classDetailsButton-${item.id}`} // Use unique testID
+      >
         <Text style={styles.buttonText}>View Detail</Text>
       </TouchableOpacity>
     </View>
@@ -81,16 +85,24 @@ const RecommendationPage: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Recommended Classes</Text>
-        <TouchableOpacity style={styles.sortButton} onPress={() => setModalVisible(true)}>
+        <TouchableOpacity
+          style={styles.sortButton}
+          onPress={() => setModalVisible(true)}
+          testID="openModalButton"
+        >
           <MaterialIcons name="sort" size={24} color="black" />
         </TouchableOpacity>
       </View>
-      <FlatList
-        data={recommendedClasses}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id} // Ensure a unique key for each item
-        contentContainerStyle={styles.listContainer}
-      />
+      {recommendedClasses.length === 0 ? (
+        <Text>No classes found</Text>
+      ) : (
+        <FlatList
+          data={recommendedClasses}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id} // Ensure a unique key for each item
+          contentContainerStyle={styles.listContainer}
+        />
+      )}
       <Modal
         animationType="slide"
         transparent={true}
@@ -98,7 +110,7 @@ const RecommendationPage: React.FC = () => {
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+          <View style={styles.modalContent} testID="sortingModal">
             <Text style={styles.modalTitle}>Sort by</Text>
             <Pressable style={styles.modalOption} onPress={() => handleSortOptionSelect('subject')}>
               <Text style={styles.modalOptionText}>Subjects you are looking for</Text>
@@ -112,7 +124,11 @@ const RecommendationPage: React.FC = () => {
             <Pressable style={styles.modalOption} onPress={() => handleGenderFilterSelect(null)}>
               <Text style={styles.modalOptionText}>All Genders</Text>
             </Pressable>
-            <Pressable style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
+            <Pressable
+              style={styles.modalCloseButton}
+              onPress={() => setModalVisible(false)}
+              testID="closeModalButton"
+            >
               <Text style={styles.modalCloseText}>Close</Text>
             </Pressable>
           </View>
@@ -121,7 +137,6 @@ const RecommendationPage: React.FC = () => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
