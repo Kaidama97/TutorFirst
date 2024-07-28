@@ -17,7 +17,7 @@ TutorFirst is an innovative online platform designed to bridge the gap between s
 
  
 
-README
+README: https://drive.google.com/file/d/1QqLRdiPd7aXlROPVlF02bmtg8nilqTEh/view?usp=sharing
 
 Project Setup
 
