@@ -51,8 +51,13 @@ npx expo start
 
 6. Demo Login Account
 
-Username: test@test.com
-Password: Password
+Student
+- Username: test@test.com
+- Password: password
+
+Teacher
+- Username: teacher1@test.com
+- Password: password
 
 Contact
 - For any questions or having trouble accessing the github repo, please contact us at @kaidama on telegram!
