@@ -172,6 +172,7 @@ const AuthProvider = (props: Props) => {
         favourite_subjects: favourite_subjects,
       };
       const { data, error } = await supabase.from('users').upsert(updates).select();
+      console.log(data);
       if (error) {
         throw error;
       } else {
